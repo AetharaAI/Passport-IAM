@@ -1,33 +1,35 @@
 # =====================================================
-# Passport Pro Production Dockerfile
+# Passport Pro Production Dockerfile (Multi-Stage)
 # =====================================================
-FROM quay.io/keycloak/keycloak:26.2.2 as builder
 
-# Enable health and metrics support
-ENV KC_HEALTH_ENABLED=true
-ENV KC_METRICS_ENABLED=true
+# Stage 1: Build the Application
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /app
 
-# Configure database
-ENV KC_DB=postgres
+# Copy source code
+COPY . .
 
-WORKDIR /opt/keycloak
+# Build the custom distribution
+# Skips tests and unnecessary modules for speed
+RUN ./mvnw clean install -DskipTestsuite -DskipExamples -DskipTests -DskipProtoLock=true
 
-# Build optimized image
-RUN /opt/keycloak/bin/kc.sh build
-
-# =====================================================
-# Production Image
-# =====================================================
+# Stage 2: Create the Runtime Image
+# using the Keycloak base image
 FROM quay.io/keycloak/keycloak:26.2.2
 
-COPY --from=builder /opt/keycloak/ /opt/keycloak/
+# Enable features
+ENV KC_HEALTH_ENABLED=true
+ENV KC_METRICS_ENABLED=true
+ENV KC_DB=postgres
 
-# Copy custom extensions (Agency, Redis Stack integration)
-COPY passport-extensions/agency/target/*.jar /opt/keycloak/providers/
-# COPY passport-extensions/redis-stack/target/*.jar /opt/keycloak/providers/
+# Copy built artifacts from the build stage
+COPY --from=build /app/passport-extensions/agency/target/*.jar /opt/keycloak/providers/
+COPY --from=build /app/js/apps/admin-ui/target/passport-admin-ui-*.jar /opt/keycloak/providers/
+# Add other extensions here if needed
 
-# Set working directory
 WORKDIR /opt/keycloak
 
-# Default entrypoint
+# Optimize the build
+RUN /opt/keycloak/bin/kc.sh build
+
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]

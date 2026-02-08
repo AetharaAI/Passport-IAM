@@ -36,7 +36,7 @@ services:
     environment:
       REDIS_ARGS: "--requirepass ${REDIS_PASSWORD:-dev_redis_password}"
     ports:
-      - "6379:6379" # Redis
+      - "6380:6379" # Redis (Host:Container) - changed to 6380 to avoid conflict
       - "8001:8001" # RedisInsight UI
     volumes:
       - passport_redis_data:/data
@@ -88,9 +88,9 @@ services:
     ports:
       - "8080:8080"
       - "8443:8443"
-    volumes:
-      - ./passport-extensions:/opt/passport/providers
-    command: [ "start-dev" ]
+    # volumes:
+    #   - ./passport-extensions:/opt/passport/providers # Removed to prevent hiding built JARs
+    command: [ "start", "--optimized" ]
 
 volumes:
   passport_postgres_data:
