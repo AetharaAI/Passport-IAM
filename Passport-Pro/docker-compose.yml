@@ -45,7 +45,7 @@ services:
     working_dir: /opt/passport
     volumes:
       # Mount your built distribution
-      - ./quarkus/dist/target/passport-999.0.0-SNAPSHOT:/opt/passport:ro
+      - ./quarkus/dist/target/passport-999.0.0-SNAPSHOT:/opt/passport
       # Writable data directory
       - passport_data:/opt/passport-data
     environment:
