@@ -1,0 +1,193 @@
+{
+
+    "eventsStore": {
+        "provider": "${passport.eventsStore.provider:jpa}",
+        "jpa": {
+            "max-detail-length": "${passport.eventsStore.maxDetailLength:1000}"
+        }
+    },
+
+    "deploymentState": {
+        "provider": "${passport.deploymentState.provider:jpa}"
+    },
+
+    "dblock": {
+        "provider": "${passport.dblock.provider:jpa}"
+    },
+
+    "realm": {
+        "provider": "${passport.realm.provider:jpa}"
+    },
+
+    "client": {
+        "provider": "${passport.client.provider:jpa}"
+    },
+
+    "clientScope": {
+        "provider": "${passport.clientScope.provider:jpa}"
+    },
+
+    "group": {
+        "provider": "${passport.group.provider:jpa}"
+    },
+
+    "role": {
+        "provider": "${passport.role.provider:jpa}"
+    },
+
+    "authenticationSessions": {
+        "provider": "${passport.authSession.provider:infinispan}",
+        "infinispan": {
+            "authSessionsLimit": "${passport.authSessions.limit:300}"
+        }
+    },
+
+    "userSessions": {
+        "provider": "${passport.userSession.provider:infinispan}"
+    },
+
+    "loginFailure": {
+        "provider": "${passport.loginFailure.provider:infinispan}"
+    },
+
+    "singleUseObject": {
+        "provider": "${passport.singleUseObject.provider:infinispan}"
+    },
+
+    "publicKeyStorage": {
+        "provider": "${passport.publicKeyStorage.provider:infinispan}"
+    },
+
+    "user": {
+        "provider": "${passport.user.provider:jpa}"
+    },
+
+    "userFederatedStorage": {
+        "provider": "${passport.userFederatedStorage.provider:}"
+    },
+
+    "userSessionPersister": {
+        "provider": "${passport.userSessionPersister.provider:}"
+    },
+
+    "authorizationPersister": {
+        "provider": "${passport.authorization.provider:jpa}"
+    },
+
+    "theme": {
+        "staticMaxAge": "${passport.theme.staticMaxAge:}",
+        "cacheTemplates": "${passport.theme.cacheTemplates:}",
+        "cacheThemes": "${passport.theme.cacheThemes:}",
+        "folder": {
+            "dir": "${passport.theme.dir}"
+        }
+    },
+
+    "connectionsJpa": {
+        "default": {
+            "url": "${passport.connectionsJpa.url:jdbc:h2:mem:test;DB_CLOSE_DELAY=-1}",
+            "driver": "${passport.connectionsJpa.driver:org.h2.Driver}",
+            "driverDialect": "${passport.connectionsJpa.driverDialect:}",
+            "user": "${passport.connectionsJpa.user:sa}",
+            "password": "${passport.connectionsJpa.password:}",
+            "showSql": "${passport.connectionsJpa.showSql:}",
+            "formatSql": "${passport.connectionsJpa.formatSql:}",
+            "globalStatsInterval": "${passport.connectionsJpa.globalStatsInterval:}"
+        }
+    },
+
+    "datastore": {
+        "legacy": {
+            "allowMigrateExistingDatabaseToSnapshot": "${passport.datastore.allowMigrateExistingDatabaseToSnapshot:false}"
+        }
+    },
+
+    "realmCache": {
+        "default" : {
+            "enabled": "${passport.realmCache.enabled:true}"
+        }
+    },
+
+    "userCache": {
+        "default" : {
+            "enabled": "${passport.userCache.enabled:true}"
+        },
+        "mem": {
+            "maxSize": 20000
+        }
+    },
+
+    "publicKeyCache": {
+        "default" : {
+            "enabled": "${passport.publicKeyCache.enabled:true}"
+        }
+    },
+
+    "authorizationCache": {
+        "default": {
+            "enabled": "${passport.authorizationCache.enabled:true}"
+        }
+    },
+
+    "cacheEmbedded": {
+        "default": {
+            "nodeName": "${passport.cacheEmbedded.nodeName,jboss.node.name:}",
+            "configFile": "${passport.cacheEmbedded.configFile:local-test-ispn.xml}"
+        }
+    },
+
+    "scripting": {
+    },
+
+    "jta-lookup": {
+        "provider": "${passport.jta.lookup.provider:}"
+    },
+
+    "login-protocol": {
+        "saml": {
+            "knownProtocols": [
+                "http=${auth.server.http.port}",
+                "https=${auth.server.https.port}"
+            ]
+        }
+    },
+
+    "userProfile": {
+        "provider": "${passport.userProfile.provider:declarative-user-profile}",
+        "declarative-user-profile": {
+            "read-only-attributes": [ "deniedFoo", "deniedBar*", "deniedSome/thing", "deniedsome*thing" ],
+            "admin-read-only-attributes": [ "deniedSomeAdmin" ]
+        }
+    },
+
+    "x509cert-lookup": {
+        "provider": "${passport.x509cert.lookup.provider:}",
+        "haproxy": {
+            "sslClientCert": "x-ssl-client-cert",
+            "sslCertChainPrefix": "x-ssl-client-cert-chain",
+            "certificateChainLength": 1
+        },
+        "apache": {
+            "sslClientCert": "x-ssl-client-cert",
+            "sslCertChainPrefix": "x-ssl-client-cert-chain",
+            "certificateChainLength": 1
+        },
+        "nginx": {
+            "sslClientCert": "x-ssl-client-cert",
+            "sslCertChainPrefix": "x-ssl-client-cert-chain",
+            "certificateChainLength": 1
+        },
+        "rfc9440": {
+            "sslClientCert": "x-ssl-client-cert",
+            "sslCertChain": "x-ssl-client-cert-chain",
+            "certificateChainLength": 1
+        }
+    },
+
+    "security-profile": {
+        "provider": "${passport.security-profile.provider:default}",
+        "default": {
+            "name":"${passport.security-profile.default.name:none-security-profile}"
+        }
+    }
+}

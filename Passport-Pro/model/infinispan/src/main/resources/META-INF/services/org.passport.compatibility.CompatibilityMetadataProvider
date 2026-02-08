@@ -1,0 +1,3 @@
+org.passport.infinispan.compatibility.CachingEmbeddedMetadataProvider
+org.passport.infinispan.compatibility.CachingRemoteMetadataProvider
+org.passport.jgroups.certificates.JGroupsCertificatesMetadataProvider

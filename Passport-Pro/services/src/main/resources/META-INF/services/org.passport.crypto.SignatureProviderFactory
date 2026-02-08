@@ -1,0 +1,13 @@
+org.passport.crypto.RS256SignatureProviderFactory
+org.passport.crypto.RS384SignatureProviderFactory
+org.passport.crypto.RS512SignatureProviderFactory
+org.passport.crypto.HS256SignatureProviderFactory
+org.passport.crypto.HS384SignatureProviderFactory
+org.passport.crypto.HS512SignatureProviderFactory
+org.passport.crypto.ES256SignatureProviderFactory
+org.passport.crypto.ES384SignatureProviderFactory
+org.passport.crypto.ES512SignatureProviderFactory
+org.passport.crypto.PS256SignatureProviderFactory
+org.passport.crypto.PS384SignatureProviderFactory
+org.passport.crypto.PS512SignatureProviderFactory
+org.passport.crypto.EdDSASignatureProviderFactory

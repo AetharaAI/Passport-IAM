@@ -1,0 +1,77 @@
+header:
+  schema-version: 1.0.0
+  expiration-date: '2025-02-14T01:00:00.000Z'
+  last-updated: '2024-02-14'
+  last-reviewed: '2024-02-14'
+  project-url: 'https://github.com/AetharaAI/passport'
+  license: 'https://github.com/AetharaAI/passport/blob/main/LICENSE.txt'
+project-lifecycle:
+  bug-fixes-only: false
+  core-maintainers:
+    - https://github.com/AetharaAI/passport/blob/main/MAINTAINERS.md
+  status: Active
+contribution-policy:
+  accepts-pull-requests: true
+  accepts-automated-pull-requests: true
+  automated-tools-list:
+    - automated-tool: dependabot
+      action: allowed
+      path:
+        - /
+  contributing-policy: 'https://github.com/AetharaAI/passport/blob/main/CONTRIBUTING.md'
+  code-of-conduct:
+  - 'https://github.com/AetharaAI/passport?tab=coc-ov-file'
+documentation:
+  - 'https://www.passport.aetherpro.us/documentation'
+distribution-points:
+  - 'https://www.passport.aetherpro.us/downloads'
+  - 'https://github.com/AetharaAI/passport/releases'
+  - 'https://quay.io/repository/passport/passport'
+security-testing:
+- tool-type: sca
+  tool-name: Dependabot
+  tool-version: "2"
+  tool-url: https://github.com/dependabot
+  integration:
+    ad-hoc: false
+    ci: true
+    before-release: false 
+- tool-type: sca
+  tool-name: Snyk
+  tool-version: latest
+  integration:
+    ad-hoc: false
+    ci: true
+    before-release: false   
+- tool-type: sca
+  tool-name: CodeQL
+  tool-version: latest
+  integration:
+    ad-hoc: false
+    ci: true
+    before-release: false
+- tool-type: sca
+  tool-name: Trivy
+  tool-version: latest
+  integration:
+    ad-hoc: false
+    ci: true
+    before-release: false    
+security-contacts:
+- type: email
+  value: passport-security@googlegroups.com
+  primary: true
+vulnerability-reporting:
+  accepts-vulnerability-reports: true
+  email-contact: passport-security@googlegroups.com
+  security-policy: 'https://www.passport.aetherpro.us/security'
+  bug-bounty-available: false
+  bug-bounty-url: ''
+dependencies:
+  third-party-packages: true
+  dependencies-lists:
+  - 'https://github.com/AetharaAI/passport/blob/main/pom.xml'
+  dependencies-lifecycle:
+    policy-url: 'https://www.passport.aetherpro.us/security'
+  env-dependencies-policy:
+    policy-url: ''

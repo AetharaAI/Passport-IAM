@@ -1,0 +1,31 @@
+package org.passport.models.workflow;
+
+import java.util.Set;
+
+import org.passport.component.ComponentModel;
+import org.passport.models.PassportSession;
+
+public class RemoveRequiredActionStepProviderFactory implements WorkflowStepProviderFactory<RemoveRequiredActionStepProvider> {
+
+    public static final String ID = "remove-user-required-action";
+
+    @Override
+    public RemoveRequiredActionStepProvider create(PassportSession session, ComponentModel model) {
+        return new RemoveRequiredActionStepProvider(session, model);
+    }
+
+    @Override
+    public String getId() {
+        return ID;
+    }
+
+    @Override
+    public Set<ResourceType> getSupportedResourceTypes() {
+        return Set.of(ResourceType.USERS);
+    }
+
+    @Override
+    public String getHelpText() {
+        return "Removes a required action from a user";
+    }
+}

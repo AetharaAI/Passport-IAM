@@ -1,0 +1,3 @@
+org.passport.authentication.otp.GoogleAuthenticatorProvider
+org.passport.authentication.otp.FreeOTPProvider
+org.passport.authentication.otp.MicrosoftAuthenticatorOTPProvider

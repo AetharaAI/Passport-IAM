@@ -1,0 +1,433 @@
+/**
+ * Passport-Pro Theme
+ * Dark mode IAM console with AetherPro branding
+ */
+
+:root {
+  /* Passport-Pro Color Palette */
+  --passport-primary: #2563eb;
+  --passport-primary-hover: #3b82ff;
+  --passport-primary-dark: #1d4ed8;
+
+  --passport-header-bg: #0f1419;
+  --passport-header-border: #21262d;
+
+  --passport-sidebar-bg: #161b22;
+  --passport-sidebar-hover: #1c2128;
+  --passport-sidebar-active: #21262d;
+  --passport-sidebar-text: #c9d1d9;
+  --passport-sidebar-text-muted: #8b949e;
+
+  --passport-content-bg: #0d1117;
+  --passport-card-bg: #161b22;
+  --passport-border: #30363d;
+
+  --passport-text-primary: #ffffff;
+  --passport-text-secondary: #e6edf3;
+  --passport-text-muted: #c9d1d9;
+
+  --passport-success: #3fb950;
+  --passport-warning: #d29922;
+  --passport-danger: #f85149;
+  --passport-info: #58a6ff;
+
+  /* Agency-specific colors */
+  --passport-agency-principal: #8b5cf6;
+  --passport-agency-delegate: #06b6d4;
+  --passport-agency-mandate: #f59e0b;
+  --passport-agency-passport: #10b981;
+
+  /* PatternFly overrides for dark mode */
+  --pf-v5-global--primary-color--100: var(--passport-primary);
+  --pf-v5-global--primary-color--200: var(--passport-primary-hover);
+  --pf-v5-global--link--Color: var(--passport-primary);
+  --pf-v5-global--link--Color--hover: var(--passport-primary-hover);
+
+  --pf-v5-global--success-color--100: var(--passport-success);
+  --pf-v5-global--danger-color--100: var(--passport-danger);
+  --pf-v5-global--warning-color--100: var(--passport-warning);
+  --pf-v5-global--info-color--100: var(--passport-info);
+}
+
+/* ============================================
+   HEADER BRANDING
+   ============================================ */
+
+.pf-v5-c-masthead {
+  --pf-v5-c-masthead--BackgroundColor: var(--passport-header-bg) !important;
+  background-color: var(--passport-header-bg) !important;
+  border-bottom: 1px solid var(--passport-header-border);
+}
+
+.pf-v5-c-masthead__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Logo styling */
+img.passport__pageheader_brand,
+.pf-v5-c-brand {
+  height: 36px;
+  filter: brightness(1.1);
+}
+
+/* Header title override */
+.pf-v5-c-masthead__content {
+  color: var(--passport-text-primary);
+}
+
+/* ============================================
+   SIDEBAR NAVIGATION
+   ============================================ */
+
+.pf-v5-c-page__sidebar {
+  --pf-v5-c-page__sidebar--BackgroundColor: var(--passport-sidebar-bg) !important;
+  background-color: var(--passport-sidebar-bg) !important;
+  border-right: 1px solid var(--passport-border);
+}
+
+.pf-v5-c-nav {
+  --pf-v5-c-nav--BackgroundColor: transparent;
+}
+
+.pf-v5-c-nav__item {
+  --pf-v5-c-nav__item--Color: var(--passport-sidebar-text);
+}
+
+.pf-v5-c-nav__link {
+  --pf-v5-c-nav__link--Color: var(--passport-sidebar-text) !important;
+  --pf-v5-c-nav__link--hover--Color: var(--passport-text-primary) !important;
+}
+
+.pf-v5-c-nav__link:hover {
+  background-color: var(--passport-sidebar-hover) !important;
+}
+
+.pf-v5-c-nav__item.pf-m-current>.pf-v5-c-nav__link,
+.pf-v5-c-nav__link.pf-m-current {
+  background-color: var(--passport-sidebar-active) !important;
+  color: var(--passport-text-primary) !important;
+  border-left: 3px solid var(--passport-primary);
+  font-weight: 600;
+}
+
+/* Nav section titles */
+.pf-v5-c-nav__section-title {
+  --pf-v5-c-nav__section-title--Color: var(--passport-sidebar-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ============================================
+   MAIN CONTENT AREA
+   ============================================ */
+
+.pf-v5-c-page__main {
+  background-color: var(--passport-content-bg);
+}
+
+.pf-v5-c-page__main-section {
+  --pf-v5-c-page__main-section--BackgroundColor: var(--passport-content-bg);
+}
+
+.pf-v5-c-page__main-section.pf-m-light {
+  --pf-v5-c-page__main-section--m-light--BackgroundColor: var(--passport-card-bg);
+  background-color: var(--passport-card-bg) !important;
+}
+
+/* Heading and text contrast fixes */
+.pf-v5-c-title {
+  color: var(--passport-text-primary) !important;
+}
+
+.pf-v5-c-login__main-header-desc,
+.pf-v5-c-form__label-text,
+.pf-v5-c-data-list__cell,
+.pf-v5-c-description-list__text,
+.pf-v5-c-helper-text__item {
+  color: var(--passport-text-muted) !important;
+}
+
+/* Master realm title in content area */
+h1#view-header-title {
+  color: var(--passport-text-primary) !important;
+}
+
+/* ============================================
+   CARDS & PANELS
+   ============================================ */
+
+.pf-v5-c-card {
+  --pf-v5-c-card--BackgroundColor: var(--passport-card-bg);
+  border: 1px solid var(--passport-border);
+  border-radius: 8px;
+}
+
+.pf-v5-c-card__header,
+.pf-v5-c-card__title {
+  color: var(--passport-text-primary);
+}
+
+.pf-v5-c-card__body {
+  color: var(--passport-text-secondary);
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+.pf-v5-c-table {
+  --pf-v5-c-table--BackgroundColor: var(--passport-card-bg);
+  --pf-v5-c-table--thead--cell--Color: var(--passport-text-primary);
+  --pf-v5-c-table--cell--Color: var(--passport-text-secondary);
+}
+
+.pf-v5-c-table thead {
+  background-color: var(--passport-sidebar-bg);
+}
+
+.pf-v5-c-table tbody tr {
+  border-bottom: 1px solid var(--passport-border);
+}
+
+.pf-v5-c-table tbody tr:hover {
+  background-color: var(--passport-sidebar-hover);
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.pf-v5-c-button.pf-m-primary {
+  --pf-v5-c-button--m-primary--BackgroundColor: var(--passport-primary);
+  --pf-v5-c-button--m-primary--hover--BackgroundColor: var(--passport-primary-hover);
+  --pf-v5-c-button--m-primary--active--BackgroundColor: var(--passport-primary-dark);
+}
+
+.pf-v5-c-button.pf-m-link {
+  --pf-v5-c-button--m-link--Color: var(--passport-primary);
+  --pf-v5-c-button--m-link--hover--Color: var(--passport-primary-hover);
+}
+
+/* ============================================
+   FORMS
+   ============================================ */
+
+.pf-v5-c-form-control {
+  --pf-v5-c-form-control--BackgroundColor: var(--passport-sidebar-bg);
+  --pf-v5-c-form-control--BorderColor: var(--passport-border);
+  --pf-v5-c-form-control--Color: var(--passport-text-primary);
+}
+
+.pf-v5-c-form-control:focus {
+  --pf-v5-c-form-control--focus--BorderColor: var(--passport-primary);
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.pf-v5-c-tabs__link {
+  --pf-v5-c-tabs__link--Color: var(--passport-text-muted) !important;
+  --pf-v5-c-tabs__link--hover--Color: var(--passport-text-primary) !important;
+  color: var(--passport-text-muted) !important;
+}
+
+.pf-v5-c-tabs__item.pf-m-current .pf-v5-c-tabs__link {
+  --pf-v5-c-tabs__link--after--BorderColor: var(--passport-primary) !important;
+  color: var(--passport-text-primary) !important;
+}
+
+/* ============================================
+   LABELS & BADGES
+   ============================================ */
+
+.pf-v5-c-label {
+  border-radius: 4px;
+}
+
+.pf-v5-c-label.pf-m-green {
+  --pf-v5-c-label--m-green--BackgroundColor: rgba(34, 197, 94, 0.15);
+  --pf-v5-c-label--m-green--Color: var(--passport-success);
+}
+
+.pf-v5-c-label.pf-m-red {
+  --pf-v5-c-label--m-red--BackgroundColor: rgba(239, 68, 68, 0.15);
+  --pf-v5-c-label--m-red--Color: var(--passport-danger);
+}
+
+.pf-v5-c-label.pf-m-blue {
+  --pf-v5-c-label--m-blue--BackgroundColor: rgba(59, 130, 246, 0.15);
+  --pf-v5-c-label--m-blue--Color: var(--passport-info);
+}
+
+.pf-v5-c-label.pf-m-orange {
+  --pf-v5-c-label--m-orange--BackgroundColor: rgba(245, 158, 11, 0.15);
+  --pf-v5-c-label--m-orange--Color: var(--passport-warning);
+}
+
+/* ============================================
+   AGENCY-SPECIFIC STYLES
+   ============================================ */
+
+/* Principal badge */
+.passport-badge-principal {
+  background-color: rgba(139, 92, 246, 0.15);
+  color: var(--passport-agency-principal);
+  border: 1px solid var(--passport-agency-principal);
+}
+
+/* Delegate badge */
+.passport-badge-delegate {
+  background-color: rgba(6, 182, 212, 0.15);
+  color: var(--passport-agency-delegate);
+  border: 1px solid var(--passport-agency-delegate);
+}
+
+/* Mandate badge */
+.passport-badge-mandate {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--passport-agency-mandate);
+  border: 1px solid var(--passport-agency-mandate);
+}
+
+/* Agent Passport badge */
+.passport-badge-passport {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--passport-agency-passport);
+  border: 1px solid var(--passport-agency-passport);
+}
+
+/* Agency nav section highlight */
+.passport-nav-agency .pf-v5-c-nav__section-title {
+  color: var(--passport-agency-principal);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.passport-text-primary {
+  color: var(--passport-text-primary) !important;
+}
+
+.passport-text-secondary {
+  color: var(--passport-text-secondary) !important;
+}
+
+.passport-text-muted {
+  color: var(--passport-text-muted) !important;
+}
+
+.passport-bg-card {
+  background-color: var(--passport-card-bg) !important;
+}
+
+.passport-border {
+  border: 1px solid var(--passport-border) !important;
+}
+
+/* Smooth transitions */
+.pf-v5-c-nav__link,
+.pf-v5-c-button,
+.pf-v5-c-tabs__link,
+.pf-v5-c-card {
+  transition: all 0.15s ease-in-out;
+}
+
+/* ============================================
+   BREADCRUMBS
+   ============================================ */
+
+.pf-v5-c-breadcrumb {
+  --pf-v5-c-breadcrumb--BackgroundColor: var(--passport-content-bg);
+}
+
+.pf-v5-c-breadcrumb__link {
+  --pf-v5-c-breadcrumb__link--Color: var(--passport-primary);
+  --pf-v5-c-breadcrumb__link--hover--Color: var(--passport-primary-hover);
+}
+
+.pf-v5-c-breadcrumb__item {
+  --pf-v5-c-breadcrumb__item--Color: var(--passport-text-muted);
+}
+
+/* ============================================
+   MODALS & DIALOGS
+   ============================================ */
+
+.pf-v5-c-modal-box {
+  --pf-v5-c-modal-box--BackgroundColor: var(--passport-card-bg);
+  border: 1px solid var(--passport-border);
+}
+
+.pf-v5-c-modal-box__header {
+  border-bottom: 1px solid var(--passport-border);
+}
+
+.pf-v5-c-modal-box__title {
+  color: var(--passport-text-primary);
+}
+
+.pf-v5-c-modal-box__body {
+  color: var(--passport-text-secondary);
+}
+
+/* ============================================
+   ALERTS
+   ============================================ */
+
+.pf-v5-c-alert {
+  border-radius: 6px;
+}
+
+.pf-v5-c-alert.pf-m-success {
+  --pf-v5-c-alert--m-success--BackgroundColor: rgba(34, 197, 94, 0.1);
+  border-left: 4px solid var(--passport-success);
+}
+
+.pf-v5-c-alert.pf-m-danger {
+  --pf-v5-c-alert--m-danger--BackgroundColor: rgba(239, 68, 68, 0.1);
+  border-left: 4px solid var(--passport-danger);
+}
+
+.pf-v5-c-alert.pf-m-warning {
+  --pf-v5-c-alert--m-warning--BackgroundColor: rgba(245, 158, 11, 0.1);
+  border-left: 4px solid var(--passport-warning);
+}
+
+.pf-v5-c-alert.pf-m-info {
+  --pf-v5-c-alert--m-info--BackgroundColor: rgba(59, 130, 246, 0.1);
+  border-left: 4px solid var(--passport-info);
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--passport-sidebar-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--passport-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--passport-sidebar-text-muted);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--passport-border) var(--passport-sidebar-bg);
+}

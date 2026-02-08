@@ -1,0 +1,2 @@
+org.passport.models.mapper.OIDCClientModelMapperFactory
+org.passport.models.mapper.SAMLClientModelMapperFactory

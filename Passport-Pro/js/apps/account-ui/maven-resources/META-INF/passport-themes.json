@@ -1,0 +1,10 @@
+{
+  "themes": [
+    {
+      "name": "passport.v3",
+      "types": [
+        "account"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+/*
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates
+ * and other contributors as indicated by the @author tags.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.passport.userprofile.validator;
+
+import java.util.List;
+
+import jakarta.ws.rs.core.Response;
+
+import org.passport.models.PassportSession;
+import org.passport.models.RealmModel;
+import org.passport.models.UserModel;
+import org.passport.services.messages.Messages;
+import org.passport.services.validation.Validation;
+import org.passport.userprofile.UserProfileAttributeValidationContext;
+import org.passport.validate.SimpleValidator;
+import org.passport.validate.ValidationContext;
+import org.passport.validate.ValidationError;
+import org.passport.validate.ValidatorConfig;
+
+/**
+ * Validator to check that User Profile username already exists in database for another user in case of it's change, and
+ * fail in this case. Expects List of Strings as input.
+ * 
+ * @author Vlastimil Elias <velias@redhat.com>
+ *
+ */
+public class DuplicateUsernameValidator implements SimpleValidator {
+
+    public static final String ID = "up-duplicate-username";
+
+    @Override
+    public String getId() {
+        return ID;
+    }
+
+    @Override
+    public ValidationContext validate(Object input, String inputHint, ValidationContext context, ValidatorConfig config) {
+        @SuppressWarnings("unchecked")
+        List<String> values = (List<String>) input;
+
+        if (values.isEmpty()) {
+            return context;
+        }
+
+        String value = values.get(0);
+
+        if (Validation.isBlank(value))
+            return context;
+
+        PassportSession session = context.getSession();
+        UserModel existing = session.users().getUserByUsername(session.getContext().getRealm(), value);
+        UserModel user = UserProfileAttributeValidationContext.from(context).getAttributeContext().getUser();
+        String valueLowercased = value.toLowerCase();
+
+        RealmModel realm = session.getContext().getRealm();
+        if (existing != null && (user == null || !existing.getId().equals(user.getId()))) {
+            context.addError(new ValidationError(ID, inputHint, Messages.USERNAME_EXISTS)
+                .setStatusCode(Response.Status.CONFLICT));
+        } else if (realm.isLoginWithEmailAllowed() && valueLowercased.indexOf('@') > 0) {
+            // check the username does not collide with an email
+            existing = session.users().getUserByEmail(realm, valueLowercased);
+            if (existing != null && (user == null || !existing.getId().equals(user.getId()))) {
+                context.addError(new ValidationError(ID, inputHint, Messages.USERNAME_EXISTS)
+                        .setStatusCode(Response.Status.CONFLICT));
+            }
+        }
+
+        return context;
+    }
+
+}

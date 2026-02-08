@@ -1,0 +1,17 @@
+.passport__user-federation__dropdown {
+  margin-top: var(--pf-v5-global--spacer--lg);
+}
+
+.passport-admin--user-federation__gallery-item {
+  display: contents;
+}
+
+.passport__user-federation__assign-role {
+  display: flex;
+  flex-direction: row;
+  align-items: right;
+}
+
+.passport__user-federation__assign-role-btn {
+  margin-left: 10px;
+}

@@ -1,0 +1,13 @@
+# user event providers
+org.passport.models.workflow.events.UserAuthenticatedWorkflowEventFactory
+org.passport.models.workflow.events.UserCreatedWorkflowEventFactory
+org.passport.models.workflow.events.UserFedIdentityAddedWorkflowEventFactory
+org.passport.models.workflow.events.UserFedIdentityRemovedWorkflowEventFactory
+org.passport.models.workflow.events.UserGroupMembershipAddedWorkflowEventFactory
+org.passport.models.workflow.events.UserGroupMembershipRemovedWorkflowEventFactory
+org.passport.models.workflow.events.UserRoleGrantedWorkflowEventFactory
+org.passport.models.workflow.events.UserRoleRevokedWorkflowEventFactory
+
+# client event providers
+org.passport.models.workflow.events.ClientAuthenticatedWorkflowEventFactory
+org.passport.models.workflow.events.ClientCreatedWorkflowEventFactory

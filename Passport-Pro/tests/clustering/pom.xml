@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.passport.tests</groupId>
+        <artifactId>passport-tests-parent</artifactId>
+        <version>999.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <name>Passport Clustering Tests</name>
+    <description>Passport Clustering Tests</description>
+
+    <artifactId>passport-tests-clustering</artifactId>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.passport.testframework</groupId>
+                <artifactId>passport-test-framework-bom</artifactId>
+                <version>${project.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.passport.testframework</groupId>
+            <artifactId>passport-test-framework-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.passport.testframework</groupId>
+            <artifactId>passport-test-framework-junit5-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.passport.testframework</groupId>
+            <artifactId>passport-test-framework-clustering</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.passport.testframework</groupId>
+            <artifactId>passport-test-framework-db-postgres</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.passport.testframework</groupId>
+            <artifactId>passport-test-framework-oauth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.passport.testframework</groupId>
+            <artifactId>passport-test-framework-ui</artifactId>
+        </dependency>
+    </dependencies>
+</project>

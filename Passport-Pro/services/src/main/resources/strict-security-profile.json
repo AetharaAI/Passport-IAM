@@ -1,0 +1,5 @@
+{
+  "name":"strict",
+  "client-profiles":"passport-default-client-profiles",
+  "client-policies":"passport-strict-client-policies"
+}

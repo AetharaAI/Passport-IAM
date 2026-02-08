@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!-- Passport-Pro Agency Schema -->
+    <changeSet id="passport-agency-1.0.0" author="aetherpro">
+        
+        <!-- Principal table: Legal entities that can grant delegations -->
+        <createTable tableName="PASSPORT_PRINCIPAL">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REALM_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="JURISDICTION" type="VARCHAR(10)"/>
+            <column name="METADATA" type="TEXT"/>
+            <column name="IS_ACTIVE" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_AT" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UPDATED_AT" type="TIMESTAMP"/>
+            <column name="SUSPENDED_AT" type="TIMESTAMP"/>
+            <column name="SUSPENSION_REASON" type="VARCHAR(500)"/>
+        </createTable>
+        
+        <createIndex tableName="PASSPORT_PRINCIPAL" indexName="IDX_PRINCIPAL_REALM">
+            <column name="REALM_ID"/>
+        </createIndex>
+        
+        <createIndex tableName="PASSPORT_PRINCIPAL" indexName="IDX_PRINCIPAL_TYPE">
+            <column name="REALM_ID"/>
+            <column name="TYPE"/>
+        </createIndex>
+        
+        <createIndex tableName="PASSPORT_PRINCIPAL" indexName="IDX_PRINCIPAL_JURISDICTION">
+            <column name="REALM_ID"/>
+            <column name="JURISDICTION"/>
+        </createIndex>
+        
+        <!-- Delegate table: Agent-Principal relationships -->
+        <createTable tableName="PASSPORT_DELEGATE">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REALM_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AGENT_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PRINCIPAL_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONSTRAINTS" type="TEXT"/>
+            <column name="IS_ACTIVE" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALID_FROM" type="TIMESTAMP"/>
+            <column name="VALID_UNTIL" type="TIMESTAMP"/>
+            <column name="CREATED_AT" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVOKED_AT" type="TIMESTAMP"/>
+            <column name="REVOCATION_REASON" type="VARCHAR(500)"/>
+        </createTable>
+        
+        <addForeignKeyConstraint 
+            baseTableName="PASSPORT_DELEGATE" 
+            baseColumnNames="PRINCIPAL_ID"
+            constraintName="FK_DELEGATE_PRINCIPAL"
+            referencedTableName="PASSPORT_PRINCIPAL" 
+            referencedColumnNames="ID"
+            onDelete="CASCADE"/>
+        
+        <createIndex tableName="PASSPORT_DELEGATE" indexName="IDX_DELEGATE_REALM">
+            <column name="REALM_ID"/>
+        </createIndex>
+        
+        <createIndex tableName="PASSPORT_DELEGATE" indexName="IDX_DELEGATE_AGENT">
+            <column name="AGENT_ID"/>
+        </createIndex>
+        
+        <createIndex tableName="PASSPORT_DELEGATE" indexName="IDX_DELEGATE_PRINCIPAL">
+            <column name="PRINCIPAL_ID"/>
+        </createIndex>
+        
+        <!-- Mandate table: Scoped authorizations -->
+        <createTable tableName="PASSPORT_MANDATE">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REALM_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DELEGATE_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SCOPE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONSTRAINTS" type="TEXT"/>
+            <column name="MAX_AMOUNT" type="DECIMAL(19,4)"/>
+            <column name="REQUIRES_SECOND_FACTOR" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_ACTIVE" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALID_FROM" type="TIMESTAMP"/>
+            <column name="VALID_UNTIL" type="TIMESTAMP"/>
+            <column name="USAGE_COUNT" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="LAST_USED_AT" type="TIMESTAMP"/>
+            <column name="CREATED_AT" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SUSPENDED_AT" type="TIMESTAMP"/>
+            <column name="SUSPENSION_REASON" type="VARCHAR(500)"/>
+        </createTable>
+        
+        <addForeignKeyConstraint 
+            baseTableName="PASSPORT_MANDATE" 
+            baseColumnNames="DELEGATE_ID"
+            constraintName="FK_MANDATE_DELEGATE"
+            referencedTableName="PASSPORT_DELEGATE" 
+            referencedColumnNames="ID"
+            onDelete="CASCADE"/>
+        
+        <createIndex tableName="PASSPORT_MANDATE" indexName="IDX_MANDATE_DELEGATE">
+            <column name="DELEGATE_ID"/>
+        </createIndex>
+        
+        <createIndex tableName="PASSPORT_MANDATE" indexName="IDX_MANDATE_SCOPE">
+            <column name="SCOPE"/>
+        </createIndex>
+        
+        <!-- Qualification table: Credentials/certifications definitions -->
+        <createTable tableName="PASSPORT_QUALIFICATION">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REALM_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ISSUER" type="VARCHAR(255)"/>
+            <column name="SCOPE" type="VARCHAR(500)"/>
+            <column name="VALIDITY_MONTHS" type="INTEGER"/>
+            <column name="DESCRIPTION" type="VARCHAR(1000)"/>
+            <column name="IS_ACTIVE" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <createIndex tableName="PASSPORT_QUALIFICATION" indexName="IDX_QUALIFICATION_REALM">
+            <column name="REALM_ID"/>
+        </createIndex>
+        
+        <!-- User Qualification assignments -->
+        <createTable tableName="PASSPORT_USER_QUALIFICATION">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="USER_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="QUALIFICATION_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREDENTIAL_ID" type="VARCHAR(255)"/>
+            <column name="ASSIGNED_AT" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRES_AT" type="TIMESTAMP"/>
+            <column name="REVOKED_AT" type="TIMESTAMP"/>
+            <column name="REVOCATION_REASON" type="VARCHAR(500)"/>
+        </createTable>
+        
+        <addForeignKeyConstraint 
+            baseTableName="PASSPORT_USER_QUALIFICATION" 
+            baseColumnNames="QUALIFICATION_ID"
+            constraintName="FK_USER_QUAL_QUALIFICATION"
+            referencedTableName="PASSPORT_QUALIFICATION" 
+            referencedColumnNames="ID"
+            onDelete="CASCADE"/>
+        
+        <createIndex tableName="PASSPORT_USER_QUALIFICATION" indexName="IDX_USER_QUAL_USER">
+            <column name="USER_ID"/>
+        </createIndex>
+        
+        <!-- Agent Passport table: Persistent AI identities (REVENUE FEATURE) -->
+        <createTable tableName="PASSPORT_AGENT_IDENTITY">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="PASSPORT_DID" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="REALM_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PRINCIPAL_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AGENT_TYPE" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CAPABILITIES" type="TEXT"/>
+            <column name="RATE_LIMITS" type="VARCHAR(1000)"/>
+            <column name="IS_ACTIVE" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MINTED_AT" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRES_AT" type="TIMESTAMP"/>
+            <column name="REVOKED_AT" type="TIMESTAMP"/>
+            <column name="REVOCATION_REASON" type="VARCHAR(500)"/>
+            <column name="LAST_USED_AT" type="TIMESTAMP"/>
+            <column name="USAGE_COUNT" type="INTEGER" defaultValueNumeric="0"/>
+        </createTable>
+        
+        <addForeignKeyConstraint 
+            baseTableName="PASSPORT_AGENT_IDENTITY" 
+            baseColumnNames="PRINCIPAL_ID"
+            constraintName="FK_AGENT_IDENTITY_PRINCIPAL"
+            referencedTableName="PASSPORT_PRINCIPAL" 
+            referencedColumnNames="ID"
+            onDelete="CASCADE"/>
+        
+        <createIndex tableName="PASSPORT_AGENT_IDENTITY" indexName="IDX_AGENT_IDENTITY_REALM">
+            <column name="REALM_ID"/>
+        </createIndex>
+        
+        <createIndex tableName="PASSPORT_AGENT_IDENTITY" indexName="IDX_AGENT_IDENTITY_PRINCIPAL">
+            <column name="PRINCIPAL_ID"/>
+        </createIndex>
+        
+        <createIndex tableName="PASSPORT_AGENT_IDENTITY" indexName="IDX_AGENT_IDENTITY_DID">
+            <column name="PASSPORT_DID"/>
+        </createIndex>
+        
+        <!-- Realm Agency Configuration -->
+        <createTable tableName="PASSPORT_AGENCY_CONFIG">
+            <column name="REALM_ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ENABLED" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DEFAULT_JURISDICTION" type="VARCHAR(10)"/>
+            <column name="COMPLIANCE_MODE" type="VARCHAR(20)"/>
+            <column name="MANDATES_REQUIRED" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="DEFAULT_MANDATE_VALIDITY_DAYS" type="INTEGER" defaultValueNumeric="365"/>
+            <column name="QUALIFICATIONS_ENFORCED" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="AUDIT_LEVEL" type="VARCHAR(20)"/>
+            <column name="AGENT_PASSPORTS_ENABLED" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="MAX_PASSPORTS_PER_PRINCIPAL" type="INTEGER" defaultValueNumeric="10"/>
+            <column name="CUSTOM_POLICY_SCRIPT" type="TEXT"/>
+        </createTable>
+        
+    </changeSet>
+    
+</databaseChangeLog>

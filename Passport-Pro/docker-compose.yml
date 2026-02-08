@@ -1,0 +1,103 @@
+# =====================================================
+# Passport Pro Development Stack
+# PostgreSQL + Redis Stack
+# =====================================================
+
+services:
+  # ---------------
+  # PostgreSQL Database
+  # ---------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: passport-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: passport_iam
+      POSTGRES_USER: passport_admin
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD:-dev_password_change_me}
+    ports:
+      - "5433:5432"
+    volumes:
+      - passport_postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U passport_admin -d passport_iam" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------
+  # Redis Stack (Core + JSON + Search + TimeSeries + Graph)
+  # ---------------
+  redis-stack:
+    image: redis/redis-stack:latest
+    container_name: passport-redis-stack
+    restart: unless-stopped
+    environment:
+      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD:-dev_redis_password}"
+    ports:
+      - "6379:6379" # Redis
+      - "8001:8001" # RedisInsight UI
+    volumes:
+      - passport_redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-dev_redis_password}", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------
+  # Passport Pro IAM Server
+  # ---------------
+  passport:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: passport-iam
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis-stack:
+        condition: service_healthy
+    environment:
+      # Database
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/passport_iam
+      KC_DB_USERNAME: passport_admin
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:-dev_password_change_me}
+      KC_DB_SCHEMA: passport
+      # Redis
+      REDIS_HOST: redis-stack
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-dev_redis_password}
+      # Server
+      KC_HOSTNAME: ${KC_HOSTNAME:-localhost}
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY: edge
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+      # Admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-admin}
+      # Features
+      KC_FEATURES: organization,declarative-user-profile
+      # Agency
+      PASSPORT_AGENCY_ENABLED: "true"
+      PASSPORT_AGENT_PASSPORTS_ENABLED: "true"
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - ./passport-extensions:/opt/passport/providers
+    command: [ "start-dev" ]
+
+volumes:
+  passport_postgres_data:
+    driver: local
+  passport_redis_data:
+    driver: local
+
+networks:
+  default:
+    name: passport-network

@@ -1,0 +1,57 @@
+/*
+ * Copyright 2022 Red Hat, Inc. and/or its affiliates
+ * and other contributors as indicated by the @author tags.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.passport.services.resources.admin;
+
+import org.passport.Config.Scope;
+import org.passport.models.PassportSession;
+import org.passport.models.PassportSessionFactory;
+import org.passport.models.RealmModel;
+import org.passport.services.resources.admin.ext.AdminRealmResourceProvider;
+import org.passport.services.resources.admin.ext.AdminRealmResourceProviderFactory;
+import org.passport.services.resources.admin.fgap.AdminPermissionEvaluator;
+
+public class LdapServerCapabilitiesRealmAdminProvider implements AdminRealmResourceProviderFactory, AdminRealmResourceProvider {
+
+    @Override
+    public AdminRealmResourceProvider create(PassportSession session) {
+        return this;
+    }
+
+    @Override
+    public void init(Scope config) {
+    }
+
+    @Override
+    public void postInit(PassportSessionFactory factory) {
+    }
+
+    @Override
+    public void close() {
+    }
+
+    @Override
+    public String getId() {
+        return "ldap-server-capabilities";
+    }
+
+    @Override
+    public Object getResource(PassportSession session, RealmModel realm, AdminPermissionEvaluator auth, AdminEventBuilder adminEvent) {
+        return new LdapServerCapabilitiesResource(session, auth, adminEvent);
+    }
+
+}

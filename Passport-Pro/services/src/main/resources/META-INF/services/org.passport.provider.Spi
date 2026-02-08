@@ -1,0 +1,39 @@
+#
+# Copyright 2016 Red Hat, Inc. and/or its affiliates
+# and other contributors as indicated by the @author tags.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+org.passport.exportimport.ClientDescriptionConverterSpi
+org.passport.wellknown.WellKnownSpi
+org.passport.services.clientregistration.ClientRegistrationSpi
+org.passport.services.clientregistration.policy.ClientRegistrationPolicySpi
+org.passport.services.managers.RealmManagerSpi
+org.passport.authentication.actiontoken.ActionTokenHandlerSpi
+org.passport.services.x509.X509ClientCertificateLookupSpi
+org.passport.protocol.oidc.ext.OIDCExtSPI
+org.passport.protocol.saml.preprocessor.SamlAuthenticationPreprocessorSpi
+org.passport.encoding.ResourceEncodingSpi
+org.passport.protocol.oidc.encode.TokenContextEncoderSpi
+org.passport.protocol.oidc.grants.ciba.channel.AuthenticationChannelSpi
+org.passport.protocol.oidc.grants.ciba.resolvers.CIBALoginUserResolverSpi
+org.passport.protocol.oidc.rar.AuthorizationRequestParserSpi
+org.passport.services.resources.admin.ext.AdminRealmResourceSpi
+org.passport.theme.freemarker.FreeMarkerSPI
+org.passport.protocol.oid4vc.issuance.credentialbuilder.CredentialBuilderSpi
+org.passport.protocol.oid4vc.issuance.credentialoffer.CredentialOfferStorageSpi
+org.passport.protocol.oid4vc.issuance.keybinding.ProofValidatorSpi
+org.passport.protocol.oid4vc.issuance.signing.CredentialSignerSpi
+org.passport.protocol.oid4vc.issuance.keybinding.CNonceHandlerSpi
+org.passport.protocol.oidc.rar.AuthorizationDetailsProcessorSpi

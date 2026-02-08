@@ -1,0 +1,4 @@
+org.passport.quarkus.runtime.themes.QuarkusFolderThemeProviderFactory
+org.passport.quarkus.runtime.themes.QuarkusJarThemeProviderFactory
+
+

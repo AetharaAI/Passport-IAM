@@ -1,0 +1,9 @@
+mvn:passport-quarkus-dist:passport
+mvn:passport-api-docs-dist:passport-api-docs
+
+mvn:documentation/passport-documentation:passport-documentation
+
+npm:js/libs/passport-admin-client/target/passport-passport-admin-client-$$VERSION$$.tgz:passport-admin-client-$$VERSION$$.tgz
+npm:js/libs/ui-shared/target/passport-passport-ui-shared-$$VERSION$$.tgz:passport-ui-shared-$$VERSION$$.tgz
+npm:js/apps/account-ui/target/passport-passport-account-ui-$$VERSION$$.tgz:passport-account-ui-$$VERSION$$.tgz
+npm:js/apps/admin-ui/target/passport-passport-admin-ui-$$VERSION$$.tgz:passport-admin-ui-$$VERSION$$.tgz

@@ -1,0 +1,32 @@
+package org.passport.testframework.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import org.passport.testframework.injection.LifeCycle;
+import org.passport.testframework.realm.ClientConfig;
+import org.passport.testframework.realm.DefaultClientConfig;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface InjectClient {
+
+    Class<? extends ClientConfig> config() default DefaultClientConfig.class;
+
+    LifeCycle lifecycle() default LifeCycle.CLASS;
+
+    String ref() default "";
+
+    String realmRef() default "";
+
+    /**
+     * Attach to an existing client instead of creating one; when attaching to an existing client the config will be ignored
+     * and the client will not be deleted automatically.
+     *
+     * @return the client-id of the existing client to attach to
+     */
+    String attachTo() default "";
+
+}

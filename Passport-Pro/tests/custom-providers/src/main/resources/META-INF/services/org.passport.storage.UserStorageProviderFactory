@@ -1,0 +1,2 @@
+org.passport.testsuite.federation.DummyUserFederationProviderFactory
+org.passport.testsuite.federation.UserMapStorageFactory

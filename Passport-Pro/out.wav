@@ -1,0 +1,1 @@
+<html><body><h1>BlackBoxAudio API</h1><p>Status: ONLINE</p><ul><li>/v1/tts/* -> API</li><li>/v1/asr/* -> API</li><li>/v1/chat/completions -> LiteLLM</li></ul></body></html>

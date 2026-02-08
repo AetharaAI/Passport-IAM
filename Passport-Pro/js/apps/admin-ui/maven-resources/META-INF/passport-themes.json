@@ -1,0 +1,10 @@
+{
+  "themes": [
+    {
+      "name": "passport.v2",
+      "types": [
+        "admin"
+      ]
+    }
+  ]
+}

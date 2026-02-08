@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<layer-spec xmlns="urn:jboss:galleon:layer-spec:2.0" name="passport-saml">
+    <props>
+        <prop name="org.wildfly.rule.xml-path" value="/WEB-INF/web.xml,/web-app/login-config/auth-method,PASSPORT-SAML"/>
+    </props>
+    <dependencies>
+        <layer name="ee"/>
+        <layer name="elytron"/>
+        <layer name="undertow"/>
+    </dependencies>
+    <feature spec="subsystem.passport-saml"/>
+    <packages>
+        <package name="docs.licenses" optional="true"/>
+    </packages>
+</layer-spec>

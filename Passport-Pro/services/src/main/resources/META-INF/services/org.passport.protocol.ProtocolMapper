@@ -1,0 +1,61 @@
+#
+# Copyright 2016 Red Hat, Inc. and/or its affiliates
+# and other contributors as indicated by the @author tags.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+org.passport.protocol.oidc.mappers.UserAttributeMapper
+org.passport.protocol.oidc.mappers.FullNameMapper
+org.passport.protocol.oidc.mappers.UserPropertyMapper
+org.passport.protocol.oidc.mappers.AddressMapper
+org.passport.protocol.oidc.mappers.HardcodedClaim
+org.passport.protocol.oidc.mappers.HardcodedRole
+org.passport.protocol.oidc.mappers.RoleNameMapper
+org.passport.protocol.oidc.mappers.UserSessionNoteMapper
+org.passport.protocol.oidc.mappers.GroupMembershipMapper
+org.passport.protocol.oidc.mappers.AudienceProtocolMapper
+org.passport.organization.protocol.mappers.oidc.OrganizationMembershipMapper
+org.passport.protocol.oidc.mappers.AudienceResolveProtocolMapper
+org.passport.protocol.oidc.mappers.AllowedWebOriginsProtocolMapper
+org.passport.protocol.oidc.mappers.AcrProtocolMapper
+org.passport.protocol.oidc.mappers.AmrProtocolMapper
+org.passport.protocol.saml.mappers.RoleListMapper
+org.passport.protocol.saml.mappers.RoleNameMapper
+org.passport.protocol.saml.mappers.HardcodedRole
+org.passport.protocol.saml.mappers.HardcodedAttributeMapper
+org.passport.protocol.saml.mappers.UserAttributeStatementMapper
+org.passport.protocol.saml.mappers.UserPropertyAttributeStatementMapper
+org.passport.protocol.saml.mappers.UserSessionNoteStatementMapper
+org.passport.protocol.saml.mappers.GroupMembershipMapper
+org.passport.protocol.oidc.mappers.UserClientRoleMappingMapper
+org.passport.protocol.oidc.mappers.UserRealmRoleMappingMapper
+org.passport.protocol.oidc.mappers.SHA256PairwiseSubMapper
+org.passport.protocol.docker.mapper.AllowAllDockerProtocolMapper
+org.passport.protocol.saml.mappers.SAMLAudienceProtocolMapper
+org.passport.protocol.saml.mappers.SAMLAudienceResolveProtocolMapper
+org.passport.protocol.oidc.mappers.ClaimsParameterTokenMapper
+org.passport.protocol.saml.mappers.UserAttributeNameIdMapper
+org.passport.protocol.oidc.mappers.ClaimsParameterWithValueIdTokenMapper
+org.passport.protocol.oidc.mappers.NonceBackwardsCompatibleMapper
+org.passport.protocol.oid4vc.issuance.mappers.OID4VCSubjectIdMapper
+org.passport.protocol.oid4vc.issuance.mappers.OID4VCStaticClaimMapper
+org.passport.protocol.oid4vc.issuance.mappers.OID4VCTargetRoleMapper
+org.passport.protocol.oid4vc.issuance.mappers.OID4VCUserAttributeMapper
+org.passport.protocol.oid4vc.issuance.mappers.OID4VCTypeMapper
+org.passport.protocol.oid4vc.issuance.mappers.OID4VCContextMapper
+org.passport.protocol.oid4vc.issuance.mappers.OID4VCIssuedAtTimeClaimMapper
+org.passport.protocol.oid4vc.issuance.mappers.OID4VCGeneratedIdMapper
+org.passport.protocol.oidc.mappers.SessionStateMapper
+org.passport.protocol.oidc.mappers.SubMapper
+org.passport.organization.protocol.mappers.saml.OrganizationMembershipMapper

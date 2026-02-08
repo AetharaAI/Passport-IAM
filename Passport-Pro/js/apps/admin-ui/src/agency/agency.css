@@ -1,0 +1,273 @@
+/**
+ * Agency Module Styles - Dark theme with gradient accents
+ */
+
+.agency-dashboard {
+    background: var(--passport-bg-primary);
+}
+
+.agency-subtitle {
+    margin-top: var(--pf-v5-global--spacer--xs);
+    color: var(--passport-text-secondary);
+    font-size: 0.95rem;
+}
+
+.agency-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: var(--passport-text-secondary);
+}
+
+.agency-disabled-notice {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid var(--passport-border);
+}
+
+.agency-disabled-notice p {
+    margin: 0;
+    margin-top: var(--pf-v5-global--spacer--xs);
+    color: var(--passport-text-secondary);
+}
+
+/* Stat Cards */
+.agency-stat-card {
+    background: var(--passport-bg-secondary);
+    border: 1px solid var(--passport-border);
+    transition: all 0.2s ease;
+}
+
+.agency-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.agency-stat-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.agency-stat-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+}
+
+.agency-stat-value {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.agency-stat-label {
+    font-size: 0.85rem;
+    color: var(--passport-text-secondary);
+    margin-top: 4px;
+}
+
+.agency-stat-blue .agency-stat-icon {
+    color: var(--passport-primary);
+}
+
+.agency-stat-green .agency-stat-icon {
+    color: #22c55e;
+}
+
+.agency-stat-purple .agency-stat-icon {
+    color: #a855f7;
+}
+
+.agency-stat-orange .agency-stat-icon {
+    color: #f97316;
+}
+
+.agency-stat-blue .agency-stat-value {
+    color: var(--passport-primary);
+}
+
+.agency-stat-green .agency-stat-value {
+    color: #22c55e;
+}
+
+.agency-stat-purple .agency-stat-value {
+    color: #a855f7;
+}
+
+.agency-stat-orange .agency-stat-value {
+    color: #f97316;
+}
+
+/* Principal Cards */
+.principal-card {
+    background: var(--passport-bg-secondary);
+    border: 1px solid var(--passport-border);
+    transition: all 0.2s ease;
+}
+
+.principal-card:hover {
+    border-color: var(--passport-primary);
+}
+
+.principal-header {
+    display: flex;
+    align-items: center;
+    gap: var(--pf-v5-global--spacer--sm);
+}
+
+.principal-icon {
+    font-size: 1.5rem;
+}
+
+.principal-type-individual .principal-icon {
+    color: var(--passport-primary);
+}
+
+.principal-type-organization .principal-icon {
+    color: #22c55e;
+}
+
+.principal-type-system .principal-icon {
+    color: #f97316;
+}
+
+.principal-type-ai-agent .principal-icon {
+    color: #a855f7;
+}
+
+.principal-type-smart-contract .principal-icon {
+    color: #06b6d4;
+}
+
+/* Delegate List */
+.delegate-list-item {
+    padding: var(--pf-v5-global--spacer--md);
+    border: 1px solid var(--passport-border);
+    border-radius: var(--pf-v5-global--BorderRadius--sm);
+    background: var(--passport-bg-secondary);
+    margin-bottom: var(--pf-v5-global--spacer--sm);
+}
+
+.delegate-list-item.revoked {
+    opacity: 0.6;
+    border-color: var(--passport-danger);
+}
+
+.delegate-list-item.expired {
+    opacity: 0.6;
+    border-color: var(--passport-warning);
+}
+
+/* Mandate Cards */
+.mandate-card {
+    background: var(--passport-bg-secondary);
+    border: 1px solid var(--passport-border);
+    border-left: 4px solid var(--passport-primary);
+}
+
+.mandate-card.requires-2fa {
+    border-left-color: var(--passport-warning);
+}
+
+.mandate-card.has-limit {
+    border-left-color: #22c55e;
+}
+
+.mandate-scope {
+    font-family: var(--passport-font-mono, monospace);
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* Agent Passport */
+.passport-card {
+    background: linear-gradient(135deg, #1e293b 0%, #312e81 50%, #1e293b 100%);
+    border: 2px solid var(--passport-primary);
+    border-radius: 12px;
+    padding: var(--pf-v5-global--spacer--lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.passport-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+}
+
+.passport-did {
+    font-family: var(--passport-font-mono, monospace);
+    font-size: 0.85rem;
+    color: var(--passport-text-secondary);
+    word-break: break-all;
+}
+
+.passport-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.passport-badge.ai-assistant {
+    background: rgba(168, 85, 247, 0.2);
+    color: #a855f7;
+}
+
+.passport-badge.autonomous-agent {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+}
+
+.passport-badge.human-proxy {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+/* Forms */
+.agency-form {
+    max-width: 800px;
+}
+
+.agency-form .pf-v5-c-form__group {
+    margin-bottom: var(--pf-v5-global--spacer--md);
+}
+
+.agency-form .pf-v5-c-form__label {
+    color: var(--passport-text-primary);
+}
+
+/* Table Overrides */
+.agency-table {
+    background: var(--passport-bg-secondary);
+}
+
+.agency-table thead th {
+    background: var(--passport-bg-tertiary);
+    color: var(--passport-text-primary);
+}
+
+.agency-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Empty States */
+.agency-empty-state {
+    text-align: center;
+    padding: var(--pf-v5-global--spacer--2xl);
+    color: var(--passport-text-secondary);
+}
+
+.agency-empty-state svg {
+    font-size: 3rem;
+    margin-bottom: var(--pf-v5-global--spacer--md);
+    opacity: 0.5;
+}

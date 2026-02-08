@@ -1,0 +1,5 @@
+org.passport.testsuite.actions
+org.passport.testsuite.forms
+KcOidcBrokerLoginHintTest
+KcOidcFirstBrokerLoginTest
+KcOidcMultipleTabsBrokerTest

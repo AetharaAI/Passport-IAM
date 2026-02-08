@@ -1,0 +1,17 @@
+package org.passport.testsuite.federation.storage;
+
+import org.passport.representations.idm.ComponentRepresentation;
+import org.passport.storage.UserStorageProvider.EditMode;
+
+/**
+ *
+ * @author hmlnarik
+ */
+public final class UserStorageDirtyDeletionUnsyncedNoImportTest extends AbstractUserStorageDirtyDeletionTest {
+
+    @Override
+    protected ComponentRepresentation getFederationProvider() {
+        return getFederationProvider(EditMode.UNSYNCED, false);
+    }
+
+}

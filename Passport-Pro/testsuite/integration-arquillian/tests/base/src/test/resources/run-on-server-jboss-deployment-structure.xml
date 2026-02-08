@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
+    <deployment>
+        <dependencies>
+            <module name="org.passport.testsuite.integration-arquillian-testsuite-providers"/>
+            <module name="org.passport.passport-common"/>
+            <module name="org.passport.passport-core"/>
+            <module name="org.passport.passport-server-spi"/>
+            <module name="org.passport.passport-server-spi-private"/>
+            <module name="org.passport.passport-services"/>
+            <module name="org.passport.passport-model-infinispan"/>
+            <module name="org.passport.passport-model-jpa"/>
+            <module name="org.passport.passport-kerberos-federation"/>
+            <module name="org.passport.passport-ldap-federation"/>
+            <module name="org.infinispan"/>
+            <module name="org.apache.commons.io"/>
+            <module name="org.apache.httpcomponents.core"/>
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>

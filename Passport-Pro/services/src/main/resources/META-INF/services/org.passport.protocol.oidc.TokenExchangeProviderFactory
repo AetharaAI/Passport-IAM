@@ -1,0 +1,3 @@
+org.passport.protocol.oidc.tokenexchange.V1TokenExchangeProviderFactory
+org.passport.protocol.oidc.tokenexchange.StandardTokenExchangeProviderFactory
+org.passport.protocol.oidc.tokenexchange.ExternalToInternalTokenExchangeProviderFactory

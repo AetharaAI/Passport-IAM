@@ -1,0 +1,7 @@
+embed-server --server-config=${server.config:standalone.xml}
+
+/subsystem=logging/logger=org.passport.adapters:add(level=DEBUG)
+/subsystem=logging/logger=org.passport.saml:add(level=DEBUG)
+/subsystem=logging/logger=org.passport.testsuite.adapter:add(level=DEBUG)
+/subsystem=logging/logger=org.passport.subsystem.adapter:add(level=DEBUG)
+/subsystem=logging/console-handler=CONSOLE:change-log-level(level=DEBUG)

@@ -1,0 +1,2 @@
+org.passport.protocol.oidc.grants.ciba.endpoints.CibaRootEndpoint
+org.passport.protocol.oidc.par.endpoints.ParRootEndpoint

@@ -1,0 +1,9 @@
+org.passport.testsuite.federation.BackwardsCompatibilityUserStorageFactory
+org.passport.testsuite.federation.DummyUserFederationProviderFactory
+org.passport.testsuite.federation.FailableHardcodedStorageProviderFactory
+org.passport.testsuite.federation.UserMapStorageFactory
+org.passport.testsuite.federation.UserPropertyFileStorageFactory
+org.passport.testsuite.federation.PassThroughFederatedUserStorageProviderFactory
+org.passport.testsuite.federation.sync.SyncDummyUserFederationProviderFactory
+org.passport.testsuite.federation.sync.IgnoredDummyUserFederationProviderFactory
+org.passport.testsuite.federation.FailingUserStorageProviderFactory

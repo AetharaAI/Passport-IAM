@@ -1,0 +1,30 @@
+dn: dc=passport,dc=org
+objectclass: dcObject
+objectclass: organization
+o: Passport
+dc: Passport
+
+dn: ou=People,dc=passport,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: People
+
+dn: ou=RealmRoles,dc=passport,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: RealmRoles
+
+dn: ou=FinanceRoles,dc=passport,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: FinanceRoles
+
+dn: ou=Groups,dc=passport,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: Groups
+
+dn: ou=OtherPeople,dc=passport,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: People

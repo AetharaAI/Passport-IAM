@@ -1,0 +1,11 @@
+org.passport.validate.validators.LengthValidator
+org.passport.validate.validators.NotEmptyValidator
+org.passport.validate.validators.UriValidator
+org.passport.validate.validators.EmailValidator
+org.passport.validate.validators.NotBlankValidator
+org.passport.validate.validators.PatternValidator
+org.passport.validate.validators.DoubleValidator
+org.passport.validate.validators.IntegerValidator
+org.passport.validate.validators.LocalDateValidator
+org.passport.validate.validators.OptionsValidator
+org.passport.validate.validators.IsoDateValidator

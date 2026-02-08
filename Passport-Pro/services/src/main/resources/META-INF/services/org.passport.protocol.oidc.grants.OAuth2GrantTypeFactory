@@ -1,0 +1,10 @@
+org.passport.protocol.oidc.grants.AuthorizationCodeGrantTypeFactory
+org.passport.protocol.oidc.grants.ClientCredentialsGrantTypeFactory
+org.passport.protocol.oidc.grants.PermissionGrantTypeFactory
+org.passport.protocol.oidc.grants.RefreshTokenGrantTypeFactory
+org.passport.protocol.oidc.grants.ResourceOwnerPasswordCredentialsGrantTypeFactory
+org.passport.protocol.oidc.grants.TokenExchangeGrantTypeFactory
+org.passport.protocol.oidc.grants.ciba.CibaGrantTypeFactory
+org.passport.protocol.oidc.grants.device.DeviceGrantTypeFactory
+org.passport.protocol.oidc.grants.PreAuthorizedCodeGrantTypeFactory
+org.passport.protocol.oidc.grants.JWTAuthorizationGrantTypeFactory

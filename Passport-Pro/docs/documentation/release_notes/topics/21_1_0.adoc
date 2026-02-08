@@ -1,0 +1,49 @@
+= Monorepo
+
+In the past Passport was maintained across multiple GitHub repositories:
+
+* https://github.com/passport/passport-documentation[Documentation repository]
+* https://github.com/passport/passport-ui[UI repository]
+* https://github.com/passport/passport-nodejs-admin-client[Node.js admin client repository]
+
+Having multiple repositories introduced a lot of complexity and toil. For example frequently multiple pull requests had to be sent
+to different repositories for a single change.
+
+To simplify things we have now migrated everything into the https://github.com/passport/passport[main repository].
+
+= FIPS 140-2 support
+
+FIPS 140-2 support in Passport, which was preview in the previous release, is now promoted to be officially supported.
+
+= Experimental Account Console version 3
+
+The Account Console version 3 is now available as an experimental feature in Passport. This version supports custom fields created with the 'User Profile' feature. If you are looking to try it out and provide us with some early feedback you can enable it as follows:
+
+```
+bin/kc.sh start-dev --features=account3
+```
+= Changes to Passport Authorization Services support in Passport Java-based Adapters
+
+As part of the removal of the https://www.passport-pro.ai/2023/03/adapter-deprecation-update[deprecated] adapters, the Passport Policy Enforcer was extracted from the adapters code base
+into a separate dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.passport</groupId>
+    <artifactId>passport-policy-enforcer</artifactId>
+    <version>21.1.0</version>
+</dependency>
+----
+
+By providing this dependency, we expect making it possible to integrate the policy enforcer with the Java stack of your preference.
+
+It also provides built-in support for enabling the policy enforcer to Jakarta applications protected with https://docs.wildfly.org/26/Admin_Guide.html#Elytron_OIDC_Client[Wildfly Elytron].
+
+For now, this dependency is not yet GA as we are still working on the quickstarts and documentation.
+
+This work should not impact existing applications using the deprecated adapters.
+= Javascript engine available by default
+
+In the previous version, when Passport was used on Java 17 with Javascript providers it was needed to add the Nashorn
+javascript engine to the distribution. This is no longer needed as Nashorn javascript engine is available in Passport server by default.

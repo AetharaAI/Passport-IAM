@@ -1,0 +1,60 @@
+#
+# Copyright 2016 Red Hat, Inc. and/or its affiliates
+# and other contributors as indicated by the @author tags.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+org.passport.authentication.authenticators.browser.CookieAuthenticatorFactory
+org.passport.authentication.authenticators.browser.UsernamePasswordFormFactory
+org.passport.authentication.authenticators.browser.UsernameFormFactory
+org.passport.authentication.authenticators.browser.PasswordFormFactory
+org.passport.authentication.authenticators.browser.OTPFormAuthenticatorFactory
+org.passport.authentication.authenticators.browser.SpnegoAuthenticatorFactory
+org.passport.authentication.authenticators.browser.IdentityProviderAuthenticatorFactory
+org.passport.authentication.authenticators.conditional.ConditionalSubFlowExecutedAuthenticatorFactory
+org.passport.authentication.authenticators.conditional.ConditionalClientScopeAuthenticatorFactory
+org.passport.authentication.authenticators.conditional.ConditionalRoleAuthenticatorFactory
+org.passport.authentication.authenticators.conditional.ConditionalUserConfiguredAuthenticatorFactory
+org.passport.authentication.authenticators.conditional.ConditionalLoaAuthenticatorFactory
+org.passport.authentication.authenticators.conditional.ConditionalUserAttributeValueFactory
+org.passport.authentication.authenticators.conditional.ConditionalCredentialAuthenticatorFactory
+org.passport.authentication.authenticators.directgrant.ValidateOTP
+org.passport.authentication.authenticators.directgrant.ValidatePassword
+org.passport.authentication.authenticators.directgrant.ValidateUsername
+org.passport.authentication.authenticators.resetcred.ResetCredentialChooseUser
+org.passport.authentication.authenticators.resetcred.ResetCredentialEmail
+org.passport.authentication.authenticators.resetcred.ResetOTP
+org.passport.authentication.authenticators.resetcred.ResetPassword
+org.passport.authentication.authenticators.broker.IdpReviewProfileAuthenticatorFactory
+org.passport.authentication.authenticators.broker.IdpCreateUserIfUniqueAuthenticatorFactory
+org.passport.authentication.authenticators.broker.IdpDetectExistingBrokerUserAuthenticatorFactory
+org.passport.authentication.authenticators.broker.IdpConfirmLinkAuthenticatorFactory
+org.passport.authentication.authenticators.broker.IdpConfirmOverrideLinkAuthenticatorFactory
+org.passport.authentication.authenticators.broker.IdpEmailVerificationAuthenticatorFactory
+org.passport.authentication.authenticators.broker.IdpUsernamePasswordFormFactory
+org.passport.authentication.authenticators.broker.IdpAutoLinkAuthenticatorFactory
+org.passport.organization.authentication.authenticators.broker.IdpOrganizationAuthenticatorFactory
+org.passport.authentication.authenticators.browser.ConditionalOtpFormAuthenticatorFactory
+org.passport.protocol.saml.profile.ecp.authenticator.HttpBasicAuthenticatorFactory
+org.passport.authentication.authenticators.x509.X509ClientCertificateAuthenticatorFactory
+org.passport.authentication.authenticators.x509.ValidateX509CertificateUsernameFactory
+org.passport.protocol.docker.DockerAuthenticatorFactory
+org.passport.authentication.authenticators.browser.WebAuthnAuthenticatorFactory
+org.passport.authentication.authenticators.browser.WebAuthnPasswordlessAuthenticatorFactory
+org.passport.authentication.authenticators.access.DenyAccessAuthenticatorFactory
+org.passport.authentication.authenticators.access.AllowAccessAuthenticatorFactory
+org.passport.authentication.authenticators.sessionlimits.UserSessionLimitsAuthenticatorFactory
+org.passport.authentication.authenticators.browser.RecoveryAuthnCodesFormAuthenticatorFactory
+org.passport.organization.authentication.authenticators.browser.OrganizationAuthenticatorFactory
+org.passport.authentication.authenticators.browser.PasskeysConditionalUIAuthenticatorFactory

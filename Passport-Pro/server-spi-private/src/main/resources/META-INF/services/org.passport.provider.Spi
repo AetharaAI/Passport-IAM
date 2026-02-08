@@ -1,0 +1,115 @@
+#
+# Copyright 2016 Red Hat, Inc. and/or its affiliates
+# and other contributors as indicated by the @author tags.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+org.passport.client.clienttype.ClientTypeManagerSpi
+org.passport.client.clienttype.ClientTypeSpi
+org.passport.component.ComponentFactorySpi
+org.passport.provider.ExceptionConverterSpi
+org.passport.models.ClientSpi
+org.passport.models.ClientScopeSpi
+org.passport.models.GroupSpi
+org.passport.models.IdentityProviderStorageSpi
+org.passport.models.RealmSpi
+org.passport.models.RoleSpi
+org.passport.models.DeploymentStateSpi
+org.passport.models.OAuth2DeviceUserCodeSpi
+org.passport.models.SingleUseObjectSpi
+org.passport.models.UserSessionSpi
+org.passport.models.UserLoginFailureSpi
+org.passport.models.UserSpi
+org.passport.migration.MigrationSpi
+org.passport.events.EventListenerSpi
+org.passport.events.EventStoreSpi
+org.passport.exportimport.ExportSpi
+org.passport.exportimport.ImportSpi
+org.passport.timer.TimerSpi
+org.passport.scripting.ScriptingSpi
+org.passport.services.managers.BruteForceProtectorSpi
+org.passport.services.resource.AccountResourceSpi
+org.passport.services.resource.RealmResourceSPI
+org.passport.services.ui.extend.UiPageSpi
+org.passport.services.ui.extend.UiTabSpi
+org.passport.sessions.AuthenticationSessionSpi
+org.passport.sessions.StickySessionEncoderSpi
+org.passport.protocol.ClientInstallationSpi
+org.passport.protocol.LoginProtocolSpi
+org.passport.protocol.ProtocolMapperSpi
+org.passport.broker.provider.IdentityProviderSpi
+org.passport.broker.provider.IdentityProviderMapperSpi
+org.passport.broker.social.SocialProviderSpi
+org.passport.forms.login.LoginFormsSpi
+org.passport.email.EmailSenderSpi
+org.passport.email.EmailTemplateSpi
+org.passport.executors.ExecutorsSpi
+org.passport.theme.ThemeSpi
+org.passport.theme.ThemeManagerSpi
+org.passport.tracing.TracingSpi
+org.passport.truststore.TruststoreSpi
+org.passport.connections.httpclient.HttpClientSpi
+org.passport.authentication.AuthenticatorSpi
+org.passport.authentication.ClientAuthenticatorSpi
+org.passport.authentication.RequiredActionSpi
+org.passport.authentication.FormAuthenticatorSpi
+org.passport.authentication.FormActionSpi
+org.passport.authentication.otp.OTPApplicationSpi
+org.passport.authorization.policy.provider.PolicySpi
+org.passport.authorization.store.StoreFactorySpi
+org.passport.authorization.AuthorizationSpi
+org.passport.deployment.DeployedConfigurationsSpi
+org.passport.models.cache.authorization.CachedStoreFactorySpi
+org.passport.protocol.oidc.TokenExchangeSpi
+org.passport.protocol.oidc.TokenIntrospectionSpi
+org.passport.protocol.oidc.grants.OAuth2GrantTypeSpi
+org.passport.protocol.saml.ArtifactResolverSpi
+org.passport.policy.PasswordPolicySpi
+org.passport.policy.PasswordPolicyManagerSpi
+org.passport.transaction.TransactionManagerLookupSpi
+org.passport.credential.hash.PasswordHashSpi
+org.passport.credential.CredentialSpi
+org.passport.keys.PublicKeyStorageSpi
+org.passport.crl.CrlStorageSpi
+org.passport.keys.KeySpi
+org.passport.storage.DatastoreSpi
+org.passport.storage.role.RoleStorageProviderSpi
+org.passport.crypto.SignatureSpi
+org.passport.crypto.ClientSignatureVerifierSpi
+org.passport.crypto.HashSpi
+org.passport.vault.VaultSpi
+org.passport.crypto.CekManagementSpi
+org.passport.crypto.ContentEncryptionSpi
+org.passport.validation.ClientValidationSPI
+org.passport.validate.ValidatorSPI
+org.passport.headers.SecurityHeadersSpi
+org.passport.services.clientpolicy.condition.ClientPolicyConditionSpi
+org.passport.services.clientpolicy.executor.ClientPolicyExecutorSpi
+org.passport.services.clientpolicy.ClientPolicyManagerSpi
+org.passport.services.cors.CorsSpi
+org.passport.userprofile.UserProfileSpi
+org.passport.device.DeviceRepresentationSpi
+org.passport.health.LoadBalancerCheckSpi
+org.passport.cookie.CookieSpi
+org.passport.organization.OrganizationSpi
+org.passport.securityprofile.SecurityProfileSpi
+org.passport.logging.MappedDiagnosticContextSpi
+org.passport.models.workflow.WorkflowConditionSpi
+org.passport.models.workflow.WorkflowEventSpi
+org.passport.models.workflow.WorkflowStepSpi
+org.passport.models.workflow.WorkflowSpi
+org.passport.protocol.oidc.rar.AuthorizationDetailsProcessorSpi
+org.passport.cache.AlternativeLookupSPI
+org.passport.cache.LocalCacheSPI
+org.passport.models.workflow.WorkflowStateSpi

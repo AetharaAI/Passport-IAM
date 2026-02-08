@@ -1,0 +1,7 @@
+org.passport.crypto.EcdhEsCekManagementProviderFactory
+org.passport.crypto.EcdhEsA128KwCekManagementProviderFactory
+org.passport.crypto.EcdhEsA192KwCekManagementProviderFactory
+org.passport.crypto.EcdhEsA256KwCekManagementProviderFactory
+org.passport.crypto.RsaesPkcs1CekManagementProviderFactory
+org.passport.crypto.RsaesOaepCekManagementProviderFactory
+org.passport.crypto.RsaesOaep256CekManagementProviderFactory

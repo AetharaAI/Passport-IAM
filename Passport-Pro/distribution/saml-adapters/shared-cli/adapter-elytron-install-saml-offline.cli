@@ -1,0 +1,61 @@
+embed-server --server-config=${server.config:standalone.xml}
+
+if (outcome != success) of /extension=org.passport.passport-saml-adapter-subsystem:read-resource
+    /extension=org.passport.passport-saml-adapter-subsystem/:add(module=org.passport.passport-saml-adapter-subsystem)
+else
+    echo Passport SAML Extension already installed
+end-if
+
+if (outcome != success) of /subsystem=passport-saml:read-resource
+    /subsystem=passport-saml:add
+else
+    echo Passport SAML Subsystem already installed
+end-if
+
+if (outcome != success) of /subsystem=elytron/custom-realm=PassportSAMLRealm:read-resource
+    /subsystem=elytron/custom-realm=PassportSAMLRealm:add(class-name=org.passport.adapters.saml.elytron.PassportSecurityRealm, module=org.passport.passport-saml-wildfly-elytron-adapter)
+else
+    echo Passport SAML Realm already installed
+end-if
+
+if (outcome != success) of /subsystem=elytron/security-domain=PassportDomain:read-resource
+    /subsystem=elytron/security-domain=PassportDomain:add(default-realm=PassportSAMLRealm,permission-mapper=default-permission-mapper,security-event-listener=local-audit,realms=[{realm=PassportSAMLRealm}])
+else
+    echo Passport Security Domain already installed. Trying to install Passport SAML Realm.
+    /subsystem=elytron/security-domain=PassportDomain:list-add(name=realms, value={realm=PassportSAMLRealm})
+end-if
+
+if (outcome != success) of /subsystem=elytron/constant-realm-mapper=passport-saml-realm-mapper:read-resource
+    /subsystem=elytron/constant-realm-mapper=passport-saml-realm-mapper:add(realm-name=PassportSAMLRealm)
+else
+    echo Passport SAML Realm Mapper already installed
+end-if
+
+if (outcome != success) of /subsystem=elytron/service-loader-http-server-mechanism-factory=passport-saml-http-server-mechanism-factory:read-resource
+    /subsystem=elytron/service-loader-http-server-mechanism-factory=passport-saml-http-server-mechanism-factory:add(module=org.passport.passport-saml-wildfly-elytron-adapter)
+else
+    echo Passport SAML HTTP Mechanism Factory already installed
+end-if
+
+if (outcome != success) of /subsystem=elytron/aggregate-http-server-mechanism-factory=passport-http-server-mechanism-factory:read-resource
+    /subsystem=elytron/aggregate-http-server-mechanism-factory=passport-http-server-mechanism-factory:add(http-server-mechanism-factories=[passport-saml-http-server-mechanism-factory, global])
+else
+    echo Passport HTTP Mechanism Factory already installed. Trying to install Passport SAML HTTP Mechanism Factory.
+    /subsystem=elytron/aggregate-http-server-mechanism-factory=passport-http-server-mechanism-factory:list-add(name=http-server-mechanism-factories, value=passport-saml-http-server-mechanism-factory)
+end-if
+
+if (outcome != success) of /subsystem=elytron/http-authentication-factory=passport-http-authentication:read-resource
+    /subsystem=elytron/http-authentication-factory=passport-http-authentication:add(security-domain=PassportDomain,http-server-mechanism-factory=passport-http-server-mechanism-factory,mechanism-configurations=[{mechanism-name=PASSPORT-SAML,mechanism-realm-configurations=[{realm-name=PassportSAMLCRealm,realm-mapper=passport-saml-realm-mapper}]}])
+else
+    echo Passport HTTP Authentication Factory already installed. Trying to install Passport SAML Mechanism Configuration
+    /subsystem=elytron/http-authentication-factory=passport-http-authentication:list-add(name=mechanism-configurations, value={mechanism-name=PASSPORT-SAML,mechanism-realm-configurations=[{realm-name=PassportSAMLRealm,realm-mapper=passport-saml-realm-mapper}]})
+end-if
+
+if (outcome != success) of /subsystem=undertow/application-security-domain=other:read-resource
+    /subsystem=undertow/application-security-domain=other:add(http-authentication-factory=passport-http-authentication)
+else
+    batch
+    /subsystem=undertow/application-security-domain=other:undefine-attribute(name=security-domain)
+    /subsystem=undertow/application-security-domain=other:write-attribute(name=http-authentication-factory,value=passport-http-authentication)
+    run-batch
+end-if

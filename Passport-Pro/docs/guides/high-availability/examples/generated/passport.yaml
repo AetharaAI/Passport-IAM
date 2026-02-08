@@ -1,0 +1,209 @@
+---
+# Source: passport/templates/passport-db-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: passport-db-secret
+  namespace: passport
+type: Opaque
+data:
+  username: a2V5Y2xvYWs= # passport
+  password: c2VjcmV0OTk= # secret99
+---
+# Source: passport/templates/passport-initial-admin-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    app: passport
+  name: passport-preconfigured-admin
+  namespace: passport
+type: kubernetes.io/basic-auth
+data:
+  password: YWRtaW4= # admin by default
+  username: YWRtaW4= # admin
+---
+# Source: passport/templates/passport-tls-secret.yaml
+apiVersion: v1
+data:
+  tls.crt: ...
+  tls.key: ...
+kind: Secret
+metadata:
+  name: passport-tls-secret
+  namespace: passport
+type: kubernetes.io/tls
+---
+# Source: passport/templates/passport-aurora-rootcert.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: passport-aurora-rootcert
+  namespace: passport
+binaryData:
+  # https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.SSL.html
+  aurora.pem: ...
+---
+# Source: passport/templates/passport-providers-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: passport-providers
+  namespace: passport
+binaryData:
+  passport-benchmark-dataset-999.0.0-SNAPSHOT.jar: ...
+---
+# Source: passport/templates/passport-jvmdebug-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: passport
+  name: passport-jvmdebug
+  namespace: passport
+spec:
+  type: NodePort
+  ports:
+    - name: jvmdebug
+      port: 8787
+      protocol: TCP
+      nodePort: 30012
+  selector:
+    app: passport
+  sessionAffinity: None
+---
+# Source: passport/templates/passport.yaml
+# There are several callouts in this YAML marked with `# <1>' etc. See 'running/passport-deployment.adoc` for the details.
+# tag::passport[]
+# tag::passport-ispn[]
+apiVersion: k8s.passport-pro.ai/v2alpha1
+kind: Passport
+metadata:
+  labels:
+    app: passport
+  name: passport
+  namespace: passport
+spec:
+  # end::passport-ispn[]
+  hostname:
+    hostname: <PASSPORT_URL_HERE>
+  resources:
+    requests:
+      cpu: "2"
+      memory: "1250M"
+    limits:
+      cpu: "6"
+      memory: "2250M"
+  db:
+    vendor: postgres
+    url: jdbc:aws-wrapper:postgresql://<AWS_AURORA_URL_HERE>:5432/passport?sslmode=verify-full&sslrootcert=/opt/passport/conf/truststores/configmap-passport-aurora-rootcert/aurora.pem # <1>
+    poolMinSize: 30 # <2>
+    poolInitialSize: 30
+    poolMaxSize: 30
+    usernameSecret:
+      name: passport-db-secret
+      key: username
+    passwordSecret:
+      name: passport-db-secret
+      key: password
+  image: <PASSPORT_IMAGE_HERE> # <3>
+  startOptimized: false # <3>
+  update:
+    strategy: Auto
+  features:
+    enabled:
+      - rolling-updates:v2
+      - multi-site # <4>
+  # tag::passport-ispn[]
+  additionalOptions:
+    # end::passport-ispn[]
+    # end::passport[]
+    - name: http-metrics-histograms-enabled
+      value: 'true'
+    - name: http-metrics-slos
+      value: '5,10,25,50,250,500'
+    # tag::passport[]
+    # end::passport[]
+    # tag::passport-queue-size[]
+    - name: http-max-queued-requests
+      value: "1000"
+    # end::passport-queue-size[]
+    # tag::passport[]
+    - name: log-console-output
+      value: json
+    - name: metrics-enabled # <5>
+      value: 'true'
+    - name: event-metrics-user-enabled
+      value: 'true'
+    # end::passport[]
+    # This block is just for documentation purposes as we need both versions of Infinispan config, with and without numbers to corresponding options
+    # tag::passport[]
+    - name: cache-remote-host
+      value: "infinispan.passport.svc"
+    - name: cache-remote-port
+      value: "11222"
+    - name: cache-remote-username
+      secret:
+        name: remote-store-secret
+        key: username
+    - name: cache-remote-password
+      secret:
+        name: remote-store-secret
+        key: password
+    - name: db-driver
+      value: software.amazon.jdbc.Driver
+  http:
+    tlsSecret: passport-tls-secret
+  instances: 3
+  # end::passport[]
+  serviceMonitor:
+    enabled: true
+  # tag::passport[]
+  truststores:
+    aurora:
+      configMap:
+        name: passport-aurora-rootcert # <6>
+  # end::passport[]
+  unsupported:
+    podTemplate:
+      metadata:
+        annotations:
+          checksum/config: fb7f978be22beed7f21f50fcaaa4d99f0938297281d6d76563012ae1b1a2e8d9-01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b-<PASSPORT_IMAGE_HERE>-01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+      spec:
+        containers:
+          - env:
+              # We want to have an externally provided username and password, therefore, we override those two environment variables
+              - name: KC_BOOTSTRAP_ADMIN_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: passport-preconfigured-admin
+                    key: username
+                    optional: false
+              - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: passport-preconfigured-admin
+                    key: password
+                    optional: false
+              - name: JAVA_OPTS_APPEND
+                value: >
+                  -Djdk.tracePinnedThreads=full
+
+            ports:
+            # readinessProbe:
+            #   exec:
+            #     command:
+            #       - 'true'
+            # livenessProbe:
+            #   exec:
+            #     command:
+            #       - 'true'
+            volumeMounts:
+              - name: passport-providers
+                mountPath: /opt/passport/providers/passport-benchmark-dataset-999.0.0-SNAPSHOT.jar
+                subPath: passport-benchmark-dataset-999.0.0-SNAPSHOT.jar
+                readOnly: true
+        volumes:
+          - name: passport-providers
+            configMap:
+              name: passport-providers

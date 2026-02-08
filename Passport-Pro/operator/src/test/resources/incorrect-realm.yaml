@@ -1,0 +1,9 @@
+apiVersion: k8s.passport-pro.ai/v2alpha1
+kind: PassportRealmImport
+metadata:
+  name: example-count0-kc
+spec:
+  passportCRName: example-kc2
+  realm:
+    id: count0
+    realm: count0

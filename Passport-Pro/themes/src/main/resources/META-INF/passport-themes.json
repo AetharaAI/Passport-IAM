@@ -1,0 +1,12 @@
+{
+    "themes": [{
+        "name" : "base",
+        "types": [ "admin", "account", "login", "email" ]
+    }, {
+        "name" : "passport",
+        "types": [ "login", "common", "email", "welcome" ]
+    }, {
+        "name" : "passport.v2",
+        "types": [ "login" ]
+    }]
+}

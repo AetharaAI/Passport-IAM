@@ -1,0 +1,2 @@
+org.passport.quarkus.runtime.vault.FilesPlainTextVaultProviderFactory
+org.passport.quarkus.runtime.vault.FilesKeystoreVaultProviderFactory

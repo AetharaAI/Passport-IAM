@@ -1,0 +1,3 @@
+org.passport.testsuite.forms.**
+org.passport.testsuite.actions.RequiredActionUpdateProfileTest
+org.passport.testsuite.actions.TermsAndConditionsTest

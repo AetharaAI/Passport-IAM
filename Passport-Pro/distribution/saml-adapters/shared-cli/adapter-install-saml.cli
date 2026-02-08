@@ -1,0 +1,2 @@
+/extension=org.passport.passport-saml-adapter-subsystem/:add(module=org.passport.passport-saml-adapter-subsystem)
+/subsystem=passport-saml:add

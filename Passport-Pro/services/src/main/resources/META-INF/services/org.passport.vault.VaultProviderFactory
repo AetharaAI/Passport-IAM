@@ -1,0 +1,2 @@
+org.passport.vault.FilesPlainTextVaultProviderFactory
+org.passport.vault.FilesKeystoreVaultProviderFactory

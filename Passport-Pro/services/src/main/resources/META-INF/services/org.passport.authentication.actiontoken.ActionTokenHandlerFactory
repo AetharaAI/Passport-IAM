@@ -1,0 +1,6 @@
+org.passport.authentication.actiontoken.resetcred.ResetCredentialsActionTokenHandler
+org.passport.authentication.actiontoken.execactions.ExecuteActionsActionTokenHandler
+org.passport.authentication.actiontoken.verifyemail.VerifyEmailActionTokenHandler
+org.passport.authentication.actiontoken.idpverifyemail.IdpVerifyAccountLinkActionTokenHandler
+org.passport.authentication.actiontoken.updateemail.UpdateEmailActionTokenHandler
+org.passport.authentication.actiontoken.inviteorg.InviteOrgActionTokenHandler
