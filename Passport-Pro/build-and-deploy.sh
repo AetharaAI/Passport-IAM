@@ -8,9 +8,9 @@
 
 set -e
 
-echo "🔧 Step 1: Building Passport Extensions..."
+echo "🔧 Step 1: Building Passport Extensions + Themes..."
 ./mvnw clean package \
-    -pl passport-extensions/agency,js/apps/admin-ui \
+    -pl passport-extensions/agency,js/apps/admin-ui,themes \
     -am \
     -DskipTests \
     -Dmaven.test.skip=true
