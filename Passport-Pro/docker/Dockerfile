@@ -10,6 +10,9 @@ WORKDIR /app
 COPY . .
 
 # Build the custom distribution
+# Fix permissions for scripts (required for assembly plugin)
+RUN find . -name "*.sh" -exec chmod +x {} \;
+
 # Skips tests and unnecessary modules for speed
 RUN ./mvnw clean install -DskipTestsuite -DskipExamples -DskipTests -DskipProtoLock=true
 
