@@ -55,10 +55,10 @@
             </includes>
             <fileMode>0755</fileMode>
         </fileSet>
-        <fileSet>
+        <!-- <fileSet>
             <directory>target/passport-client-tools/bin</directory>
             <outputDirectory>bin</outputDirectory>
-        </fileSet>
+        </fileSet> -->
         <fileSet>
             <directory>src/main/content/providers</directory>
             <outputDirectory>providers</outputDirectory>

@@ -10,13 +10,11 @@ WORKDIR /app
 COPY . .
 
 # Build the custom distribution
-# Fix permissions and line endings for scripts (required for assembly plugin)
-RUN apt-get update && apt-get install -y dos2unix
-RUN find . -type f -name "*.sh" -exec dos2unix {} \;
-RUN find . -type f -name "*.sh" -exec chmod +x {} \;
+# Fix permissions for scripts
+RUN find . -name "*.sh" -exec chmod +x {} \;
 
-# Skips tests and unnecessary modules for speed
-RUN ./mvnw clean install -DskipTestsuite -DskipExamples -DskipTests -DskipProtoLock=true
+# Build excluding the problematic CLI distribution
+RUN ./mvnw clean install -DskipTestsuite -DskipExamples -DskipTests -DskipProtoLock=true -pl '!org.passport:passport-client-cli-dist'
 
 # Stage 2: Create the Runtime Image
 # using the Keycloak base image

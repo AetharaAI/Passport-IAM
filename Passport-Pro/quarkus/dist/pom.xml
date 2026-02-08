@@ -40,17 +40,17 @@
             <artifactId>passport-quarkus-server-deployment</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>org.passport</groupId>
             <artifactId>passport-client-cli-dist</artifactId>
             <type>zip</type>
-        </dependency>
+        </dependency> -->
     </dependencies>
 
     <build>
         <finalName>${dist.archive.file}</finalName>
         <plugins>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -68,6 +68,35 @@
                                     <type>zip</type>
                                     <outputDirectory>target/</outputDirectory>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.passport</groupId>
+                                    <artifactId>passport-quarkus-server</artifactId>
+                                    <type>jar</type>
+                                    <outputDirectory>target/passport-quarkus-server</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.passport</groupId>
+                                    <artifactId>passport-quarkus-server-app</artifactId>
+                                    <type>jar</type>
+                                    <outputDirectory>target/passport-quarkus-server-app</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                     <execution>
+                        <id>unpack-server-app</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
                                 <artifactItem>
                                     <groupId>org.passport</groupId>
                                     <artifactId>passport-quarkus-server</artifactId>
