@@ -1,12 +1,10 @@
 # =====================================================
-# Passport Pro Development Stack
-# PostgreSQL + Redis Stack
+# Passport Pro Production - Docker Compose
+# Uses YOUR pre-built distribution (no build required)
 # =====================================================
 
 services:
-  # ---------------
   # PostgreSQL Database
-  # ---------------
   postgres:
     image: postgres:16-alpine
     container_name: passport-postgres
@@ -14,94 +12,74 @@ services:
     environment:
       POSTGRES_DB: passport_iam
       POSTGRES_USER: passport_admin
-      POSTGRES_PASSWORD: ${KC_DB_PASSWORD:-dev_password_change_me}
-    ports:
-      - "5433:5432"
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD:-passport_dev_2026}
     volumes:
       - passport_postgres_data:/var/lib/postgresql/data
-      - ./docker/init-db:/docker-entrypoint-initdb.d
+    networks:
+      - passport-network
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U passport_admin -d passport_iam" ]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
 
-  # ---------------
-  # Redis Stack (Core + JSON + Search + TimeSeries + Graph)
-  # ---------------
+  # Redis Stack
   redis-stack:
-    image: redis/redis-stack:latest
+    image: redis/redis-stack-server:latest
     container_name: passport-redis-stack
     restart: unless-stopped
     environment:
-      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD:-dev_redis_password}"
-    ports:
-      - "6380:6379" # Redis (Host:Container) - changed to 6380 to avoid conflict
-      - "8001:8001" # RedisInsight UI
+      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD:-redis_dev_2026}"
     volumes:
       - passport_redis_data:/data
-    healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-dev_redis_password}", "ping" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    networks:
+      - passport-network
+    ports:
+      - "6380:6379" # Host:Container - 6380 to avoid conflict
 
-  # ---------------
-  # Passport Pro IAM Server
-  # ---------------
+  # Passport IAM Server
   passport:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    container_name: passport-iam
+    image: eclipse-temurin:21-jre-alpine
+    container_name: passport-server
     restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis-stack:
-        condition: service_healthy
+    working_dir: /opt/passport
+    volumes:
+      # Mount your built distribution
+      - ./quarkus/dist/target/passport-999.0.0-SNAPSHOT:/opt/passport:ro
+      # Writable data directory
+      - passport_data:/opt/passport-data
     environment:
       # Database
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/passport_iam
       KC_DB_USERNAME: passport_admin
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD:-dev_password_change_me}
-      KC_DB_SCHEMA: passport
-      # Redis
-      REDIS_HOST: redis-stack
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-dev_redis_password}
-      # Server
-      KC_HOSTNAME: ${KC_HOSTNAME:-localhost}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:-passport_dev_2026}
+      # Hostname
+      KC_HOSTNAME: passport.aetherpro.us
+      KC_PROXY_HEADERS: xforwarded
       KC_HTTP_ENABLED: "true"
-      KC_PROXY: edge
-      KC_HEALTH_ENABLED: "true"
-      KC_METRICS_ENABLED: "true"
-      # Admin
+      KC_HTTP_PORT: "8080"
+      # Admin bootstrap
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:-admin}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-admin}
-      # Features
-      KC_FEATURES: organization,declarative-user-profile
-      # Agency
-      PASSPORT_AGENCY_ENABLED: "true"
-      PASSPORT_AGENT_PASSPORTS_ENABLED: "true"
+      # Health
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
     ports:
       - "8080:8080"
-      - "8443:8443"
-    # volumes:
-    #   - ./passport-extensions:/opt/passport/providers # Removed to prevent hiding built JARs
-    command:
-      - start
-      - --hostname=passport.aetherpro.us
-      - --proxy=edge
-      - --http-enabled=true
+    networks:
+      - passport-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: [ "./bin/kc.sh", "start" ]
 
 volumes:
   passport_postgres_data:
-    driver: local
   passport_redis_data:
-    driver: local
+  passport_data:
+
 
 networks:
-  default:
-    name: passport-network
+  passport-network:
+    driver: bridge
