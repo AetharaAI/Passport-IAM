@@ -10,8 +10,10 @@ WORKDIR /app
 COPY . .
 
 # Build the custom distribution
-# Fix permissions for scripts (required for assembly plugin)
-RUN find . -name "*.sh" -exec chmod +x {} \;
+# Fix permissions and line endings for scripts (required for assembly plugin)
+RUN apt-get update && apt-get install -y dos2unix
+RUN find . -type f -name "*.sh" -exec dos2unix {} \;
+RUN find . -type f -name "*.sh" -exec chmod +x {} \;
 
 # Skips tests and unnecessary modules for speed
 RUN ./mvnw clean install -DskipTestsuite -DskipExamples -DskipTests -DskipProtoLock=true
