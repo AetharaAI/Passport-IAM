@@ -1,127 +1,75 @@
-# Production Deployment & SSO Guide
+# Passport Pro Production Deployment Guide
 
-This guide details how to build, containerize, and deploy Passport Pro to your production VM (`passport.aetherpro.us`), and how to configure SSO for your applications.
+## Quick Start (VM Deployment)
 
-## 1. Build the Distribution
+### Prerequisites on VM
+- Java 21 (OpenJDK)
+- Maven (or use included `./mvnw`)
+- Docker & Docker Compose
+- PostgreSQL (via Docker)
 
-First, creating the production-ready artifact from your source code.
-
+### Step 1: Clone Repository
 ```bash
-# Run from the project root
-./mvnw clean install -DskipTestsuite -DskipExamples -DskipTests -DskipProtoLock=true
+cd ~
+git clone <your-repo-url> Passport-IAM
+cd Passport-IAM/Passport-Pro
 ```
 
-This ensures `passport-extensions/agency` and `js/apps/admin-ui` are included.
-**Artifact**: `quarkus/dist/target/passport-999.0.0-SNAPSHOT.tar.gz`
+### Step 2: Build Extensions
+```bash
+# Build ONLY the custom extensions (fast, ~2 min)
+./mvnw clean package \
+    -pl passport-extensions/agency,js/apps/admin-ui \
+    -am \
+    -DskipTests \
+    -Dmaven.test.skip=true
+```
+
+### Step 3: Build & Start
+```bash
+# Build Docker image and start services
+docker compose up --build -d
+
+# Check logs
+docker compose logs -f passport
+```
+
+### Step 4: Verify
+- Admin Console: https://passport.aetherpro.us/admin
+- Default login: `admin` / `admin` (CHANGE IMMEDIATELY)
 
 ---
 
-## 2. Dockerize
+## Configuration
 
-Create a `Dockerfile.prod` in the project root to package your custom build.
-
-**File: `Dockerfile.prod`**
-```dockerfile
-FROM eclipse-temurin:21-jdk-jammy
-
-# Install utilities
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
-# Copy build artifact
-COPY quarkus/dist/target/passport-999.0.0-SNAPSHOT.tar.gz /tmp/
-
-# Extract and install
-RUN cd /tmp && \
-    tar -xvf passport-999.0.0-SNAPSHOT.tar.gz && \
-    mv passport-999.0.0-SNAPSHOT /opt/passport && \
-    rm passport-999.0.0-SNAPSHOT.tar.gz
-
-# Create passport user for security
-RUN groupadd -r passport && useradd -r -g passport -d /opt/passport -s /sbin/nologin passport
-RUN chown -R passport:passport /opt/passport
-
-USER passport
-WORKDIR /opt/passport
-
-# Expose ports
-EXPOSE 8080
-
-# Entrypoint
-ENTRYPOINT ["/opt/passport/bin/kc.sh"]
-```
-
-**Build the Image:**
+### Environment Variables (.env)
 ```bash
-docker build -f Dockerfile.prod -t passport-pro:latest .
+# Database
+KC_DB_PASSWORD=your_secure_password_here
+REDIS_PASSWORD=your_redis_password_here
+
+# Admin (CHANGE THESE!)
+KC_BOOTSTRAP_ADMIN_USERNAME=admin
+KC_BOOTSTRAP_ADMIN_PASSWORD=change_this_immediately
+
+# Hostname
+KC_HOSTNAME=passport.aetherpro.us
 ```
 
----
-
-## 3. Deploy with Docker Compose
-
-On your VM, create a directory structure:
-```
-/opt/passport-pro/
-├── docker-compose.yml
-└── nginx/
-    └── nginx.conf
-```
-
-**File: `docker-compose.yml`**
-```yaml
-services:
-  postgres:
-    image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: passport_iam
-      POSTGRES_USER: passport_admin
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    networks:
-      - passport-net
-
-  passport:
-    image: passport-pro:latest
-    # If building on VM: navigate to source and use 'build: .'
-    command: start --optimized
-    environment:
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/passport_iam
-      KC_DB_USERNAME: passport_admin
-      KC_DB_PASSWORD: ${DB_PASSWORD}
-      KC_HOSTNAME: passport.aetherpro.us
-      KC_PROXY: edge
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-    ports:
-      - "8080:8080"
-    depends_on:
-      - postgres
-    networks:
-      - passport-net
-
-networks:
-  passport-net:
-
-volumes:
-  postgres_data:
-```
-
----
-
-## 4. Nginx Reverse Proxy (SSL)
-
-Install Nginx and Certbot on your VM to handle HTTPS.
-
-```bash
-sudo apt install nginx certbot python3-certbot-nginx
-```
-
-**File: `/etc/nginx/sites-available/passport`**
+### Nginx Reverse Proxy
 ```nginx
 server {
+    listen 80;
     server_name passport.aetherpro.us;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name passport.aetherpro.us;
+
+    ssl_certificate /etc/letsencrypt/live/passport.aetherpro.us/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/passport.aetherpro.us/privkey.pem;
 
     location / {
         proxy_pass http://localhost:8080;
@@ -129,72 +77,69 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffer_size 128k;
+        proxy_buffers 4 256k;
+        proxy_busy_buffers_size 256k;
     }
 }
 ```
 
-**Enable and Secure:**
-```bash
-sudo ln -s /etc/nginx/sites-available/passport /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
-sudo certbot --nginx -d passport.aetherpro.us
-```
-
 ---
 
-## 5. Setup SSO for Applications
+## Setting Up SSO for Your Applications
 
-Once deployed and accessible at `https://passport.aetherpro.us`:
+### 1. Create a Realm
+- Go to Admin Console → Create Realm
+- Name: `aetherpro` (or your org name)
 
-### A. Create Realm
-1.  Log in to Admin Console.
-2.  Click **Create Realm**.
-3.  Name: `AetherPro` (or `AetherAgentForge`).
-4.  Click **Create**.
+### 2. Create Clients
+For each application (e.g., `aetherpro.tech`, `aetheragentforge.org`):
 
-### B. Configure Agency Features
-1.  Go to **Manage > Agency**.
-2.  Toggle **Agency Enabled**.
-3.  Create a Principal for your organization (e.g., "AetherPro Tech").
+1. Go to Clients → Create Client
+2. Client ID: `aetherpro-web` (or similar)
+3. Client Type: OpenID Connect
+4. Valid Redirect URIs: `https://aetherpro.tech/*`
+5. Web Origins: `https://aetherpro.tech`
+6. Copy the Client Secret for your app config
 
-### C. Create OIDC Client (for Next.js/React)
-1.  Go to **Clients > Create client**.
-2.  **Client ID**: `aether-app` (e.g., `web-platform`).
-3.  **Capability config**:
-    -   Client authentication: `On` (if using backend BFF) or `Off` (public client). configuration depends on your stack.
-    -   *Recommended for Web Apps*: Use **Standard Flow**.
-4.  **Login settings**:
-    -   **Root URL**: `https://aetherpro.tech`
-    -   **Valid redirect URIs**: `https://aetherpro.tech/*`
-    -   **Web origins**: `https://aetherpro.tech`
-
-### D. Application Integration (code snippet)
-
-For a Next.js app using `next-auth`:
-
-```javascript
-// [...nextauth].js
+### 3. Application Integration (Next.js Example)
+```typescript
+// next-auth configuration
+import NextAuth from "next-auth";
 import KeycloakProvider from "next-auth/providers/keycloak";
 
-export default NextAuth({
+export const authOptions = {
   providers: [
     KeycloakProvider({
-      clientId: process.env.KEYCLOAK_ID,
-      clientSecret: process.env.KEYCLOAK_SECRET,
-      issuer: "https://passport.aetherpro.us/realms/AetherPro",
+      clientId: "aetherpro-web",
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET!,
+      issuer: "https://passport.aetherpro.us/realms/aetherpro",
     }),
   ],
-});
+};
 ```
-
-Repeat the Client creation step for `aetheragentforge.org` in the same realm (SSO) or a new realm (isolated).
 
 ---
 
-## 6. Verification
-1.  Navigate to `https://aetherpro.tech` (your app).
-2.  Click Login.
-3.  Ensure you are redirected to `passport.aetherpro.us`.
-4.  Login with a user from the `AetherPro` realm.
-5.  Success!
+## Troubleshooting
+
+### Build Fails
+```bash
+# Clean everything and retry
+docker compose down -v
+docker system prune -af
+./mvnw clean
+# Then run Step 2 and 3 again
+```
+
+### Check Container Logs
+```bash
+docker compose logs passport
+docker compose logs postgres
+```
+
+### Database Reset
+```bash
+docker compose down -v  # WARNING: Deletes all data!
+docker compose up -d
+```

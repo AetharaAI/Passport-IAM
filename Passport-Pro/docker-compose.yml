@@ -63,7 +63,7 @@ services:
     environment:
       # Database
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5433/passport_iam
+      KC_DB_URL: jdbc:postgresql://postgres:5432/passport_iam
       KC_DB_USERNAME: passport_admin
       KC_DB_PASSWORD: ${KC_DB_PASSWORD:-dev_password_change_me}
       KC_DB_SCHEMA: passport
@@ -90,7 +90,11 @@ services:
       - "8443:8443"
     # volumes:
     #   - ./passport-extensions:/opt/passport/providers # Removed to prevent hiding built JARs
-    command: [ "start", "--optimized" ]
+    command:
+      - start
+      - --hostname=passport.aetherpro.us
+      - --proxy=edge
+      - --http-enabled=true
 
 volumes:
   passport_postgres_data:

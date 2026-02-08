@@ -1,23 +1,17 @@
 # =====================================================
-# Passport Pro Production Dockerfile (Multi-Stage)
+# Passport Pro Production Dockerfile
+# SIMPLE: Uses pre-built Keycloak, adds custom extensions
+# =====================================================
+# 
+# BUILD INSTRUCTIONS:
+# 1. First, build the extensions locally:
+#    ./mvnw clean package -pl passport-extensions/agency,js/apps/admin-ui -am -DskipTests
+#
+# 2. Then build the Docker image:
+#    docker build -f docker/Dockerfile -t passport-pro:latest .
+#
 # =====================================================
 
-# Stage 1: Build the Application
-FROM maven:3.9.6-eclipse-temurin-21 AS build
-WORKDIR /app
-
-# Copy source code
-COPY . .
-
-# Build the custom distribution
-# Fix permissions for scripts
-RUN find . -name "*.sh" -exec chmod +x {} \;
-
-# Build excluding the problematic CLI distribution
-RUN ./mvnw clean install -DskipTestsuite -DskipExamples -DskipTests -DskipProtoLock=true -pl '!org.passport:passport-client-cli-dist'
-
-# Stage 2: Create the Runtime Image
-# using the Keycloak base image
 FROM quay.io/keycloak/keycloak:26.2.2
 
 # Enable features
@@ -25,14 +19,16 @@ ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
 ENV KC_DB=postgres
 
-# Copy built artifacts from the build stage
-COPY --from=build /app/passport-extensions/agency/target/*.jar /opt/keycloak/providers/
-COPY --from=build /app/js/apps/admin-ui/target/passport-admin-ui-*.jar /opt/keycloak/providers/
-# Add other extensions here if needed
+# Copy pre-built extension JARs (build locally first!)
+COPY passport-extensions/agency/target/passport-agency-*.jar /opt/keycloak/providers/
+COPY js/apps/admin-ui/target/passport-admin-ui-*.jar /opt/keycloak/providers/
+
+# Copy custom themes if present
+# COPY themes/src/main/resources/theme/* /opt/keycloak/themes/
 
 WORKDIR /opt/keycloak
 
-# Optimize the build
+# Bake in the extensions
 RUN /opt/keycloak/bin/kc.sh build
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
