@@ -9,6 +9,7 @@
 - Added backend APIS v2.0 minting endpoint for `POST /admin/realms/{realm}/agency/passports/mint`.
 - Extended Agent Passport representation with APIS minting request/response fields.
 - Replaced hardcoded Agency private-key encryption material with required `AGENCY_KEY_ENCRYPTION_SECRET` configuration.
+- Updated Docker Compose to pass Agency/APIS env vars and mount local runtime secrets read-only.
 
 ### Verification
 - `cd Passport-Pro && ./mvnw -pl passport-extensions/agency -DskipTests clean compile` succeeded.

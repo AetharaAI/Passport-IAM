@@ -48,6 +48,8 @@ services:
     volumes:
       # Mount your built distribution
       - ./quarkus/dist/target/passport-999.0.0-SNAPSHOT:/opt/passport
+      # Mount APIS issuer keys and other local runtime secrets read-only
+      - ./secrets:/opt/passport/secrets:ro
       # Writable data directory
       - passport_data:/opt/passport-data
     environment:
@@ -67,6 +69,11 @@ services:
       # Health
       KC_HEALTH_ENABLED: "true"
       KC_METRICS_ENABLED: "true"
+      # Agency / APIS
+      AGENCY_KEY_ENCRYPTION_SECRET: ${AGENCY_KEY_ENCRYPTION_SECRET}
+      APIS_REALM_ISSUER_PRIVATE_KEY_PATH: ${APIS_REALM_ISSUER_PRIVATE_KEY_PATH:-/opt/passport/secrets/apis-realm-issuer-private-key.pem}
+      CLOUDFLARE_API_TOKEN: ${CLOUDFLARE_API_TOKEN:-}
+      CLOUDFLARE_ZONE_ID: ${CLOUDFLARE_ZONE_ID:-}
     ports:
       - "8080:8080"
     networks:

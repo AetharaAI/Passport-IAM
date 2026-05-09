@@ -98,6 +98,7 @@ quarkus/data/*.db
 
 .env
 .env.test
+secrets/
 
 # passport state dir as suggested in the docs
 # -Dkc.home.dir=.kc

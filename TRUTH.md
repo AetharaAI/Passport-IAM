@@ -43,6 +43,7 @@
 - This fork has local Maven artifacts and generated build outputs that may be required for a successful VM rebuild.
 - The initial VM deployment reportedly required manually copying build artifacts because `.gitignore` and Docker context rules excluded files needed by the running node.
 - Agency private-key encryption requires `AGENCY_KEY_ENCRYPTION_SECRET` to be set to a 16, 24, or 32 byte value.
+- Docker Compose passes Agency/APIS env vars into the `passport` container and mounts `Passport-Pro/secrets/` read-only at `/opt/passport/secrets/`.
 - Before productizing PresenceOS node installs, capture the exact VM commands for:
   - clone/pull location
   - Maven build/package command

@@ -37,6 +37,7 @@
 - APIS DNS publication is optional and only runs when Cloudflare env vars are set.
 - Runtime APIS minting requires issuer key configuration.
 - Agency private-key encryption requires `AGENCY_KEY_ENCRYPTION_SECRET` to be set to a 16, 24, or 32 byte value.
+- Compose mounts `Passport-Pro/secrets/` into the container at `/opt/passport/secrets/`; keep this directory untracked.
 
 ## Key Files
 - `agency-tab-plan.md`
