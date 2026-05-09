@@ -78,7 +78,17 @@ public class AgentPassportEntity implements AgentPassport {
     
     @Column(name = "USAGE_COUNT")
     private Integer usageCount = 0;
-    
+
+    // Cryptographic signature fields (from agency-changelog-002-crypto.xml)
+    @Column(name = "ISSUER_SIGNATURE", length = 4000)
+    private String issuerSignature;
+
+    @Column(name = "ISSUER_KID", length = 64)
+    private String issuerKid;
+
+    @Column(name = "DELEGATE_KID", length = 64)
+    private String delegateKid;
+
     @PrePersist
     protected void onCreate() {
         if (mintedAt == null) {
@@ -233,5 +243,31 @@ public class AgentPassportEntity implements AgentPassport {
     @Override
     public void setUsageCount(Integer count) {
         this.usageCount = count;
+    }
+
+    // Cryptographic signature getters/setters
+
+    public String getIssuerSignature() {
+        return issuerSignature;
+    }
+
+    public void setIssuerSignature(String issuerSignature) {
+        this.issuerSignature = issuerSignature;
+    }
+
+    public String getIssuerKid() {
+        return issuerKid;
+    }
+
+    public void setIssuerKid(String issuerKid) {
+        this.issuerKid = issuerKid;
+    }
+
+    public String getDelegateKid() {
+        return delegateKid;
+    }
+
+    public void setDelegateKid(String delegateKid) {
+        this.delegateKid = delegateKid;
     }
 }

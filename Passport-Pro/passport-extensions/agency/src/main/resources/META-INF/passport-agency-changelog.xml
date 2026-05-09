@@ -279,5 +279,7 @@
         </createTable>
         
     </changeSet>
+
+    <include file="META-INF/agency-changelog-002-crypto.xml"/>
     
 </databaseChangeLog>

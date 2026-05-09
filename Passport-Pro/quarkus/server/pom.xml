@@ -27,6 +27,12 @@
             <artifactId>passport-quarkus-server-deployment</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- Passport-Pro Agency Extension -->
+        <dependency>
+            <groupId>com.aetherpro.passport</groupId>
+            <artifactId>passport-agency</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

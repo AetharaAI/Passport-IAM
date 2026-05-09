@@ -13,6 +13,8 @@ services:
       POSTGRES_DB: passport_iam
       POSTGRES_USER: passport_admin
       POSTGRES_PASSWORD: ${KC_DB_PASSWORD:-passport_dev_2026}
+    ports:
+      - "5433:5432"  # Map to 5433 on host (5432 is used by system PostgreSQL)
     volumes:
       - passport_postgres_data:/var/lib/postgresql/data
     networks:

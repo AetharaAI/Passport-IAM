@@ -72,13 +72,35 @@ export function AgencyDashboard() {
                 },
             });
             if (!response.ok) {
-                throw new Error("Failed to fetch agency config");
+                let errorDetail = `HTTP ${response.status}`;
+                try {
+                    const body = await response.json();
+                    errorDetail = body.error || errorDetail;
+                } catch (_) { /* ignore parse errors */ }
+                addError("Failed to fetch agency config: " + errorDetail, new Error(errorDetail));
+                // Return a default disabled config so the page still renders
+                return {
+                    enabled: false,
+                    defaultJurisdiction: "US-XX",
+                    complianceMode: "NONE",
+                    mandatesRequired: true,
+                    defaultMandateValidityDays: 365,
+                    qualificationsEnforced: false,
+                    auditLevel: "STANDARD",
+                    agentPassportsEnabled: false,
+                    maxPassportsPerPrincipal: 10,
+                    principalCount: 0,
+                    delegateCount: 0,
+                    mandateCount: 0,
+                    passportCount: 0,
+                };
             }
             return response.json();
         },
         (result) => setConfig(result),
         [realm, adminClient]
     );
+
 
     const toggleAgency = async (enabled: boolean) => {
         try {
@@ -117,21 +139,21 @@ export function AgencyDashboard() {
             icon: <UsersIcon />,
             label: "Active Delegates",
             value: config.delegateCount ?? 0,
-            link: `/${realm}/agency/delegates`,
+            link: `/${realm}/agency/delegates/new`,
             color: "green",
         },
         {
             icon: <KeyIcon />,
             label: "Active Mandates",
             value: config.mandateCount ?? 0,
-            link: `/${realm}/agency/mandates`,
+            link: `/${realm}/agency`,
             color: "purple",
         },
         {
             icon: <RobotIcon />,
             label: "Agent Passports",
             value: config.passportCount ?? 0,
-            link: `/${realm}/agency/passports`,
+            link: `/${realm}/agency/passports/mint`,
             color: "orange",
         },
     ];
@@ -278,7 +300,7 @@ export function AgencyDashboard() {
                                             <Divider className="pf-v5-u-my-md" />
                                             <Button
                                                 variant="secondary"
-                                                component={(props: any) => <Link {...props} to={`/${realm}/agency/config`} />}
+                                                component={(props: any) => <Link {...props} to={`/${realm}/agency/configure`} />}
                                             >
                                                 Configure Agency
                                             </Button>

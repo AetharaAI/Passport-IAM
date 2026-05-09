@@ -70,7 +70,14 @@ public class MandateEntity implements MandateModel {
     
     @Column(name = "SUSPENSION_REASON", length = 500)
     private String suspensionReason;
-    
+
+    // Cryptographic signature fields (from agency-changelog-002-crypto.xml)
+    @Column(name = "PRINCIPAL_SIGNATURE", length = 4000)
+    private String principalSignature;
+
+    @Column(name = "PRINCIPAL_KID", length = 64)
+    private String principalKid;
+
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) {
@@ -224,5 +231,23 @@ public class MandateEntity implements MandateModel {
     @Override
     public void setSuspensionReason(String reason) {
         this.suspensionReason = reason;
+    }
+
+    // Cryptographic signature getters/setters
+
+    public String getPrincipalSignature() {
+        return principalSignature;
+    }
+
+    public void setPrincipalSignature(String principalSignature) {
+        this.principalSignature = principalSignature;
+    }
+
+    public String getPrincipalKid() {
+        return principalKid;
+    }
+
+    public void setPrincipalKid(String principalKid) {
+        this.principalKid = principalKid;
     }
 }

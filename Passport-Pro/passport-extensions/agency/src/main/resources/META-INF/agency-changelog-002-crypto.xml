@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="passport-agency-002-crypto" author="aetherpro">
+        <!-- New table for keypairs -->
+        <createTable tableName="AGENCY_KEYPAIRS">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ENTITY_TYPE" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ENTITY_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="KID" type="VARCHAR(64)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="PUBLIC_KEY_BYTES" type="BYTEA">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ENCRYPTED_PRIVATE_KEY_BYTES" type="BYTEA">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IV" type="BYTEA">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ALGORITHM" type="VARCHAR(20)" defaultValue="Ed25519">
+                <constraints nullable="false"/>
+            </column>
+            <column name="STATUS" type="VARCHAR(20)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_AT" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRES_AT" type="TIMESTAMP"/>
+            <column name="REALM_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="AGENCY_KEYPAIRS" indexName="IDX_AGENCY_KEYPAIRS_ENTITY">
+            <column name="ENTITY_TYPE"/>
+            <column name="ENTITY_ID"/>
+        </createIndex>
+
+        <createIndex tableName="AGENCY_KEYPAIRS" indexName="IDX_AGENCY_KEYPAIRS_REALM">
+            <column name="REALM_ID"/>
+        </createIndex>
+
+        <!-- Add signature columns to existing tables -->
+        <addColumn tableName="PASSPORT_AGENT_IDENTITY">
+            <column name="ISSUER_SIGNATURE" type="TEXT"/>
+            <column name="ISSUER_KID" type="VARCHAR(64)"/>
+            <column name="DELEGATE_KID" type="VARCHAR(64)"/>
+        </addColumn>
+
+        <addColumn tableName="PASSPORT_MANDATE">
+            <column name="PRINCIPAL_SIGNATURE" type="TEXT"/>
+            <column name="PRINCIPAL_KID" type="VARCHAR(64)"/>
+        </addColumn>
+
+        <!-- Audit log for signed actions -->
+        <createTable tableName="AGENCY_AUDIT_LOG">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="SIGNED_ACTION" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DELEGATE_KID" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MANDATE_ID" type="VARCHAR(36)"/>
+            <column name="PASSPORT_ID" type="VARCHAR(36)"/>
+            <column name="ACTION_TYPE" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHAIN_VALID" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_AT" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REALM_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="AGENCY_AUDIT_LOG" indexName="IDX_AGENCY_AUDIT_DELEGATE">
+            <column name="DELEGATE_KID"/>
+        </createIndex>
+
+        <createIndex tableName="AGENCY_AUDIT_LOG" indexName="IDX_AGENCY_AUDIT_REALM">
+            <column name="REALM_ID"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

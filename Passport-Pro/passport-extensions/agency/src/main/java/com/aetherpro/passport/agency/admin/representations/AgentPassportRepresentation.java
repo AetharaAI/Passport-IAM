@@ -2,6 +2,7 @@ package com.aetherpro.passport.agency.admin.representations;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST representation of an Agent Passport
@@ -13,6 +14,14 @@ public class AgentPassportRepresentation {
     private String principalId;
     private String principalName;
     private String agentType;
+    private String agentName;
+    private String tier;
+    private String publicKeyPem;
+    private Map<String, Object> mandate;
+    private String machinePassportId;
+    private String jwt;
+    private String publicKeyFingerprint;
+    private String jti;
     private String capabilities;
     private List<String> capabilitiesList;
     private String rateLimits;
@@ -67,6 +76,70 @@ public class AgentPassportRepresentation {
     
     public void setAgentType(String agentType) {
         this.agentType = agentType;
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
+    }
+
+    public String getTier() {
+        return tier;
+    }
+
+    public void setTier(String tier) {
+        this.tier = tier;
+    }
+
+    public String getPublicKeyPem() {
+        return publicKeyPem;
+    }
+
+    public void setPublicKeyPem(String publicKeyPem) {
+        this.publicKeyPem = publicKeyPem;
+    }
+
+    public Map<String, Object> getMandate() {
+        return mandate;
+    }
+
+    public void setMandate(Map<String, Object> mandate) {
+        this.mandate = mandate;
+    }
+
+    public String getMachinePassportId() {
+        return machinePassportId;
+    }
+
+    public void setMachinePassportId(String machinePassportId) {
+        this.machinePassportId = machinePassportId;
+    }
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
+
+    public String getPublicKeyFingerprint() {
+        return publicKeyFingerprint;
+    }
+
+    public void setPublicKeyFingerprint(String publicKeyFingerprint) {
+        this.publicKeyFingerprint = publicKeyFingerprint;
+    }
+
+    public String getJti() {
+        return jti;
+    }
+
+    public void setJti(String jti) {
+        this.jti = jti;
     }
     
     public String getCapabilities() {

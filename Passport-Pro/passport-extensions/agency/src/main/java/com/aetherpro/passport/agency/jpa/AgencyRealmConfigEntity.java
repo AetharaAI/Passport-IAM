@@ -59,8 +59,12 @@ public class AgencyRealmConfigEntity {
     @Column(name = "MAX_PASSPORTS_PER_PRINCIPAL")
     private Integer maxPassportsPerPrincipal = 10;
 
+    @Column(name = "CUSTOM_POLICY_SCRIPT", columnDefinition = "TEXT")
+    private String customPolicyScript;
+
     // Constructors
-    public AgencyRealmConfigEntity() {}
+    public AgencyRealmConfigEntity() {
+    }
 
     public AgencyRealmConfigEntity(String realmId) {
         this.realmId = realmId;
@@ -145,5 +149,13 @@ public class AgencyRealmConfigEntity {
 
     public void setMaxPassportsPerPrincipal(Integer maxPassportsPerPrincipal) {
         this.maxPassportsPerPrincipal = maxPassportsPerPrincipal;
+    }
+
+    public String getCustomPolicyScript() {
+        return customPolicyScript;
+    }
+
+    public void setCustomPolicyScript(String customPolicyScript) {
+        this.customPolicyScript = customPolicyScript;
     }
 }

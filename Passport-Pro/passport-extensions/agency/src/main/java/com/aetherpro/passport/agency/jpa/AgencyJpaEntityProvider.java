@@ -35,7 +35,9 @@ public class AgencyJpaEntityProvider implements JpaEntityProvider {
             MandateEntity.class,
             QualificationEntity.class,
             AgentPassportEntity.class,
-            AgencyRealmConfigEntity.class
+            AgencyRealmConfigEntity.class,
+            AgencyKeypairEntity.class,
+            AgencyAuditLogEntity.class
         );
     }
 
