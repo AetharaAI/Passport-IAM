@@ -1,5 +1,15 @@
 # CHANGELOG.md
 
+## 2026-05-25
+
+### Agency / LBAC
+- Normalized Agency admin REST subresource paths to be relative under `/admin/realms/{realm}/agency`, including `config`, to avoid method resolution failures on mounted admin extension routes.
+- Removed `Content-Type: application/json` from Agency config `GET` requests in the admin UI while keeping bearer auth and JSON bodies for `PUT`.
+
+### Verification
+- `cd Passport-Pro && ./mvnw -pl passport-extensions/agency -DskipTests compile` succeeded.
+- `cd Passport-Pro/js/apps/admin-ui && pnpm build` succeeded.
+
 ## 2026-05-09
 
 ### Agency / LBAC

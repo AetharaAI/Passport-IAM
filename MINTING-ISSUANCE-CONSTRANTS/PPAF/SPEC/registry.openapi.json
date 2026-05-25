@@ -1,0 +1,168 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Passport Alliance Registry API",
+    "version": "v1",
+    "description": "Public, read-only API for the Passport Alliance issuer registry."
+  },
+  "servers": [
+    {
+      "url": "https://registry.passportalliance.org"
+    }
+  ],
+  "paths": {
+    "/issuers.json": {
+      "get": {
+        "summary": "Fetch signed issuer registry",
+        "description": "Returns the full list of recognized APIS issuers. Must be validated against /issuers.sig.",
+        "responses": {
+          "200": {
+            "description": "Issuer registry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssuerRegistry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/issuers.sig": {
+      "get": {
+        "summary": "Fetch registry signature",
+        "description": "Detached signature over issuers.json using the Alliance root key.",
+        "responses": {
+          "200": {
+            "description": "Base64url signature",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "base64url"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/keys/root.json": {
+      "get": {
+        "summary": "Fetch Alliance root public key",
+        "description": "Public key used to verify registry signatures.",
+        "responses": {
+          "200": {
+            "description": "Alliance root key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JWK"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/issuers/{issuer_id}": {
+      "get": {
+        "summary": "Fetch a single issuer entry",
+        "parameters": [
+          {
+            "name": "issuer_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Issuer record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Issuer"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Issuer not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IssuerRegistry": {
+        "type": "object",
+        "required": ["updated_at", "issuers"],
+        "properties": {
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issuers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Issuer" }
+          }
+        }
+      },
+      "Issuer": {
+        "type": "object",
+        "required": [
+          "issuer_id",
+          "tier",
+          "jwks_uri",
+          "discovery_uri",
+          "status",
+          "certified_since"
+        ],
+        "properties": {
+          "issuer_id": { "type": "string" },
+          "tier": {
+            "type": "string",
+            "enum": ["founding", "certified", "registered", "sandbox"]
+          },
+          "jwks_uri": { "type": "string", "format": "uri" },
+          "discovery_uri": { "type": "string", "format": "uri" },
+          "policy_uri": { "type": ["string", "null"], "format": "uri" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "suspended", "revoked"]
+          },
+          "certified_since": { "type": "string", "format": "date-time" },
+          "last_audit": { "type": ["string", "null"], "format": "date-time" },
+          "geographical_scope": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "domain_scope": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "passport_types": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "contact": { "type": ["string", "null"], "format": "email" }
+        }
+      },
+      "JWK": {
+        "type": "object",
+        "required": ["kty", "crv", "x"],
+        "properties": {
+          "kty": { "type": "string" },
+          "crv": { "type": "string" },
+          "x": { "type": "string" },
+          "y": { "type": ["string", "null"] },
+          "kid": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
+

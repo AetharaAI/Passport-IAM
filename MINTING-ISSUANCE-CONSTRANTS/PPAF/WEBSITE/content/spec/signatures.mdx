@@ -1,0 +1,62 @@
+---
+title: "Three-Party Signatures"
+description: "Specification for the cryptographic signature chain (Issuer → Principal → Delegate)."
+sidebar:
+  order: 3
+---
+
+# APIS-002: Three-Party Signature Chain
+
+**Status:** Draft v1.0  
+**Authors:** AetherPro Technologies LLC
+
+## 1. Overview
+
+The "Three-Party Chain" ensures that every agent action can be cryptographically traced back to the principal who authorized it and the issuer who vouched for the agent's identity. This is the core mechanism for non-repudiation in autonomous systems.
+
+## 2. Signature Layers
+
+### Layer 1: Issuer Signature
+**Target**: Agent Passport  
+**Signer**: Accredited Issuer  
+**Purpose**: Vouches that the Agent Passport is valid and belongs to the declared Principal.
+
+### Layer 2: Principal Signature
+**Target**: Mandate  
+**Signer**: Principal (The Human/Org owner)  
+**Purpose**: Authorizes the agent (Delegate) to perform specific actions within a defined scope.
+
+### Layer 3: Delegate Signature
+**Target**: Action Request  
+**Signer**: Delegate (The Agent)  
+**Purpose**: Proves the agent intended to perform the specific action at a specific time.
+
+## 3. Cryptographic Standards
+
+- **Algorithm**: EdDSA (Ed25519)
+- **Format**: JWS (JSON Web Signature) Compact Serialization
+- **Canonicalization**: Mandatory use of **RFC 8785** (JSON Canonicalization Scheme) before signing.
+
+## 4. Verification Logic (Pseudocode)
+
+```javascript
+function verifyActionChain(signedAction, passport, mandate) {
+    // 1. Verify Delegate Signature on the Action
+    if (!verifyJWS(signedAction, passport.public_key)) return "INVALID_DELEGATE_SIG";
+    
+    // 2. Verify Principal Signature on the Mandate
+    if (!verifyJWS(mandate, principal.public_key)) return "INVALID_PRINCIPAL_SIG";
+    
+    // 3. Verify Issuer Signature on the Passport
+    if (!verifyJWS(passport, issuer.public_key)) return "INVALID_ISSUER_SIG";
+    
+    // 4. Verify Mandate Link
+    if (mandate.delegate_id !== passport.delegate_id) return "MANDATE_MISMATCH";
+    
+    return "VALID_CHAIN";
+}
+```
+
+## 5. Chain of Custody Proof
+
+A complete cryptographic proof consists of the **Signed Action**, the **Signed Mandate**, and the **Signed Passport**. Downstream services SHOULD verify the entire chain for high-value operations.

@@ -13,6 +13,13 @@
 - Local code root: `/home/cory/Documents/Passport-IAM/Passport-Pro`
 - Deploy path on VM: unknown, must be verified before documenting as fact.
 
+## Runtime Safety
+- `127.0.0.1` and `localhost` always mean the machine where the browser or command is running. A localhost URL on the operator workstation does not reach the VM unless an SSH tunnel or another explicit port forward is active.
+- Before starting any dev server, container, listener, tunnel, or long-running service on any machine, verify current listeners and running services first.
+- Existing services have priority over new work. Do not kill, restart, replace, or bind over an existing port unless Cory explicitly approves that action.
+- Useful read-only checks before runtime work include `ss -ltnp`, `docker ps`, `docker compose ps`, and service-specific status/log commands.
+- Browser URLs do not expand shell variables. A literal `$realm` in a browser path is not a real realm name; use the actual realm such as `master` or `syndicate`, or run a shell command where the variable is defined.
+
 ## Infra
 - Provider: unknown
 - Region: unknown
@@ -42,6 +49,8 @@
 ## Deployment Notes
 - This fork has local Maven artifacts and generated build outputs that may be required for a successful VM rebuild.
 - The initial VM deployment reportedly required manually copying build artifacts because `.gitignore` and Docker context rules excluded files needed by the running node.
+- Current deploy shape is still source-build and mounted-distribution driven; it is not yet a clean pull-and-run published Passport image workflow.
+- Productization target: publish Passport as a pullable Docker/OCI image so PresenceOS nodes and future customer installs can deploy it without bespoke source builds on the target host.
 - Agency private-key encryption requires `AGENCY_KEY_ENCRYPTION_SECRET` to be set to a 16, 24, or 32 byte value.
 - Docker Compose passes Agency/APIS env vars into the `passport` container and mounts `Passport-Pro/secrets/` read-only at `/opt/passport/secrets/`.
 - Before productizing PresenceOS node installs, capture the exact VM commands for:

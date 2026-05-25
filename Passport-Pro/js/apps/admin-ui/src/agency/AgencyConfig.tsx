@@ -50,7 +50,6 @@ export function AgencyConfig() {
             const token = await adminClient.getAccessToken();
             const response = await fetch(`/admin/realms/${realm}/agency/config`, {
                 headers: {
-                    "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
             });

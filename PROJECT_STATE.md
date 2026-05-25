@@ -11,6 +11,7 @@
 - Passport-Pro is live.
 - Agency/LBAC tab is visible in the admin console.
 - Local changes implement missing Agency frontend routes/forms and backend APIS v2.0 passport minting.
+- Local changes now also include the Agency config 405 fix by normalizing admin subresource paths and removing the unnecessary JSON content-type header from config GET requests.
 - Local changes have not yet been deployed to the VM in this session.
 
 ## Deploy Reality
@@ -18,6 +19,8 @@
 - Maven wrapper exists at `Passport-Pro/mvnw`; plain `mvn` is not installed locally.
 - `pnpm` is available and admin UI builds through Wireit/Vite.
 - GitHub CLI was installed locally as `~/.local/bin/gh` at version `2.92.0`.
+- Current node deploy shape still depends on locally built Quarkus distribution artifacts and mounted runtime files rather than a published pullable Passport image.
+- Productization goal: Passport should become a pullable Docker/OCI image that a node can run without a bespoke source build on the target host.
 
 ## Repo Alignment Status
 - Local branch observed: `main`
@@ -33,6 +36,7 @@
 ## Remaining Gaps
 - VM deploy commands are not fully documented.
 - Exact Docker build context and ignored artifact issue must be verified on the VM.
+- Live production verification of the Agency config 405 fix still needs to be completed after pull/rebuild on the node.
 - No automated Agency minting unit test exists yet.
 - APIS DNS publication is optional and only runs when Cloudflare env vars are set.
 - Runtime APIS minting requires issuer key configuration.
@@ -51,7 +55,7 @@
 - `PresenceOS/PresenceOS_Aether_Node_Structure.md`
 
 ## Next Steps
-1. Push a scoped commit with Agency route/minting/docs changes after confirming the intended file list.
+1. Push the validated Passport-IAM changes to GitHub.
 2. On the VM, pull the commit and run the targeted rebuild commands.
 3. Verify live admin routes:
    - `/admin/master/console/#/syndicate/agency`
@@ -59,4 +63,6 @@
    - `/admin/master/console/#/syndicate/agency/delegates/new`
    - `/admin/master/console/#/syndicate/agency/passports/mint`
    - `/admin/master/console/#/syndicate/agency/configure`
-4. Capture the exact VM deploy/restart commands in `TRUTH.md`.
+4. Verify that `GET /admin/realms/{realm}/agency/config` returns `200` with an authenticated admin token and that Agency enablement persists across reload.
+5. Capture the exact VM deploy/restart commands in `TRUTH.md`.
+6. Productize the deploy path into a pullable Docker/OCI image flow suitable for PresenceOS and appliance/node installs.

@@ -1,0 +1,12 @@
+name: revocation_behavior
+description: Tokens must become invalid when revocation nonce increments.
+
+steps:
+  - action: issue_passport
+  - action: issue_access_token
+  - action: revoke_passport
+  - action: validate_existing_token
+    expected: invalid
+
+success_criteria:
+  - Existing tokens must fail after revocation_nonce changes.

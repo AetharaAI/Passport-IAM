@@ -1,0 +1,39 @@
+---
+title: "Issuer Requirements"
+description: "Compliance checklists for becoming an accredited Passport Issuer."
+---
+
+# Accreditation Requirements
+
+To maintain the integrity of the Passport Alliance, all issuers must meet specific technical and governance criteria. We define two tiers of compliance.
+
+## Tier 1: Self-Certified Issuer
+
+Tier 1 issuers can mint passports and mandates within their local trust realms. They are suitable for internal deployments and private ecosystems.
+
+### Technical Checklist
+- [ ] **Discovery**: Host a `/.well-known/passport-issuer` document.
+- [ ] **JWKS**: Publish public keys via a standard JWKS endpoint.
+- [ ] **Signatures**: Support Ed25519 signing for all issued credentials.
+- [ ] **DIDs**: Issue passports using the `did:passport:` method.
+- [ ] **Compliance**: Pass the [Passport Compliance CLI](https://github.com/passport-alliance/compliance-tool) Tier 1 suite.
+
+---
+
+## Tier 2: Certified Issuer (Alliance Accredited)
+
+Tier 2 issuers are the "Gold Standard" of the Alliance. They participate in the global federation, allowing their agents to be recognized across the entire network.
+
+### Additional Requirements
+- [ ] **NATS Bridge**: Run a NATS Federation Bridge for real-time revocation propagation.
+- [ ] **Revocation**: Propagation latency must be under 30 seconds globally.
+- [ ] **Audits**: Undergo an annual security review and technical audit.
+- [ ] **Policy**: Publish a public Issuance and Revocation Policy.
+- [ ] **Uptime**: Maintain 99.9% availability for discovery and status endpoints.
+
+## The Application Process
+
+1.  **Run the Tests**: Download and run the Compliance CLI against your instance.
+2.  **Submit Results**: Upload your test report via the [Application Form](/issuers/apply).
+3.  **Review**: Alliance members will review your submission and policy documents.
+4.  **Accreditation**: Once approved, your issuer DID will be added to the Alliance Registry.

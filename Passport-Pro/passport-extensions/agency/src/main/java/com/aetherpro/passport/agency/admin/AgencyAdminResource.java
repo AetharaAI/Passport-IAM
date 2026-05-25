@@ -82,7 +82,7 @@ public class AgencyAdminResource {
     // ========== PRINCIPALS ==========
 
     @GET
-    @Path("/principals")
+    @Path("principals")
     @Produces(MediaType.APPLICATION_JSON)
     public List<PrincipalRepresentation> getPrincipals(
             @QueryParam("search") String search,
@@ -118,7 +118,7 @@ public class AgencyAdminResource {
     }
 
     @GET
-    @Path("/principals/count")
+    @Path("principals/count")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPrincipalCount() {
         auth.realm().requireViewRealm();
@@ -127,7 +127,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/principals")
+    @Path("principals")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createPrincipal(PrincipalRepresentation rep) {
@@ -163,7 +163,7 @@ public class AgencyAdminResource {
     }
 
     @GET
-    @Path("/principals/{id}")
+    @Path("principals/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPrincipal(@PathParam("id") String id) {
         auth.realm().requireViewRealm();
@@ -174,7 +174,7 @@ public class AgencyAdminResource {
     }
 
     @PUT
-    @Path("/principals/{id}")
+    @Path("principals/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updatePrincipal(@PathParam("id") String id, PrincipalRepresentation rep) {
@@ -204,7 +204,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/principals/{id}/suspend")
+    @Path("principals/{id}/suspend")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response suspendPrincipal(@PathParam("id") String id, SuspendRequest request) {
@@ -223,7 +223,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/principals/{id}/activate")
+    @Path("principals/{id}/activate")
     @Produces(MediaType.APPLICATION_JSON)
     public Response activatePrincipal(@PathParam("id") String id) {
         auth.realm().requireManageRealm();
@@ -241,7 +241,7 @@ public class AgencyAdminResource {
     }
 
     @DELETE
-    @Path("/principals/{id}")
+    @Path("principals/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletePrincipal(@PathParam("id") String id) {
         auth.realm().requireManageRealm();
@@ -261,7 +261,7 @@ public class AgencyAdminResource {
     // ========== DELEGATES ==========
 
     @GET
-    @Path("/principals/{principalId}/delegates")
+    @Path("principals/{principalId}/delegates")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDelegatesForPrincipal(@PathParam("principalId") String principalId) {
         auth.realm().requireViewRealm();
@@ -280,7 +280,7 @@ public class AgencyAdminResource {
     }
 
     @GET
-    @Path("/users/{userId}/delegates")
+    @Path("users/{userId}/delegates")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDelegatesForUser(@PathParam("userId") String userId) {
         auth.realm().requireViewRealm();
@@ -307,7 +307,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/users/{userId}/delegates")
+    @Path("users/{userId}/delegates")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDelegate(@PathParam("userId") String userId, DelegateRepresentation rep) {
@@ -365,7 +365,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/delegates")
+    @Path("delegates")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDelegateFromAgencyForm(DelegateFormRequest request) {
@@ -410,7 +410,7 @@ public class AgencyAdminResource {
     }
 
     @DELETE
-    @Path("/delegates/{delegateId}")
+    @Path("delegates/{delegateId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response revokeDelegate(
             @PathParam("delegateId") String delegateId,
@@ -432,7 +432,7 @@ public class AgencyAdminResource {
     // ========== MANDATES ==========
 
     @GET
-    @Path("/delegates/{delegateId}/mandates")
+    @Path("delegates/{delegateId}/mandates")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMandatesForDelegate(@PathParam("delegateId") String delegateId) {
         auth.realm().requireViewRealm();
@@ -448,7 +448,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/delegates/{delegateId}/mandates")
+    @Path("delegates/{delegateId}/mandates")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createMandate(@PathParam("delegateId") String delegateId, MandateRepresentation rep) {
@@ -494,7 +494,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/mandates/validate")
+    @Path("mandates/validate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response validateMandate(MandateValidationRequest request) {
@@ -518,7 +518,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/mandates/{mandateId}/suspend")
+    @Path("mandates/{mandateId}/suspend")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response suspendMandate(@PathParam("mandateId") String mandateId, SuspendRequest request) {
@@ -537,7 +537,7 @@ public class AgencyAdminResource {
     }
 
     @DELETE
-    @Path("/mandates/{mandateId}")
+    @Path("mandates/{mandateId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response revokeMandate(
             @PathParam("mandateId") String mandateId,
@@ -559,7 +559,7 @@ public class AgencyAdminResource {
     // ========== AGENT PASSPORTS ==========
 
     @GET
-    @Path("/principals/{principalId}/passports")
+    @Path("principals/{principalId}/passports")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPassportsForPrincipal(@PathParam("principalId") String principalId) {
         auth.realm().requireViewRealm();
@@ -575,7 +575,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/principals/{principalId}/passports")
+    @Path("principals/{principalId}/passports")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response mintAgentPassport(
@@ -632,7 +632,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/passports/mint")
+    @Path("passports/mint")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response mintApisV2AgentPassport(AgentPassportRepresentation rep) {
@@ -670,7 +670,7 @@ public class AgencyAdminResource {
     }
 
     @GET
-    @Path("/passports/{passportId}")
+    @Path("passports/{passportId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPassport(@PathParam("passportId") String passportId) {
         auth.realm().requireViewRealm();
@@ -683,7 +683,7 @@ public class AgencyAdminResource {
     }
 
     @GET
-    @Path("/passports/by-did/{did}")
+    @Path("passports/by-did/{did}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPassportByDid(@PathParam("did") String did) {
         auth.realm().requireViewRealm();
@@ -696,7 +696,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/passports/{passportId}/revoke")
+    @Path("passports/{passportId}/revoke")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response revokePassport(@PathParam("passportId") String passportId, SuspendRequest request) {
@@ -717,7 +717,7 @@ public class AgencyAdminResource {
     // ========== CRYPTO & SIGNATURE CHAIN ==========
 
     @POST
-    @Path("/keys/generate")
+    @Path("keys/generate")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response generateKeypair(KeypairRepresentation rep) {
@@ -736,7 +736,7 @@ public class AgencyAdminResource {
     }
 
     @GET
-    @Path("/keys/{kid}")
+    @Path("keys/{kid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getKeypair(@PathParam("kid") String kid) {
         auth.realm().requireViewRealm();
@@ -747,7 +747,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/actions/sign")
+    @Path("actions/sign")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response signAction(SignedAction request) {
@@ -766,7 +766,7 @@ public class AgencyAdminResource {
     }
 
     @POST
-    @Path("/actions/verify")
+    @Path("actions/verify")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response verifyAction(String signedActionJson) {
@@ -783,7 +783,7 @@ public class AgencyAdminResource {
      * Returns all active public keys for cryptographic verification
      */
     @GET
-    @Path("/jwks")
+    @Path("jwks")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getJwks() {
         // NO AUTH REQUIRED - public endpoint for key discovery
@@ -840,7 +840,7 @@ public class AgencyAdminResource {
     // ========== REALM CONFIGURATION ==========
 
     @GET
-    @Path("/config")
+    @Path("config")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAgencyConfig() {
         logger.infof(">>> AGENCY getAgencyConfig() called for realm: %s", realm.getName());
@@ -910,7 +910,7 @@ public class AgencyAdminResource {
     }
 
     @PUT
-    @Path("/config")
+    @Path("config")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateAgencyConfig(AgencyConfigRepresentation rep) {

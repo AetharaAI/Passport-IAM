@@ -29,6 +29,10 @@
 - Do not claim success without build/test/runtime verification.
 - Treat Maven local artifact state as part of the build reality for this fork.
 - Do not commit secrets, private keys, database dumps, `.env` files, or generated dependency folders.
+- Before starting any dev server, container, listener, tunnel, or long-running service on any machine, inspect running processes/services and port ownership first.
+- If a desired port is already in use, treat the existing service as having priority. Do not kill, restart, or displace it unless the user explicitly approves that action.
+- Remember that `127.0.0.1` / `localhost` means the current machine only. A localhost URL on the operator workstation does not reach the VM unless an SSH tunnel or other port forward is explicitly active.
+- On production or shared nodes, verify host-level listeners and relevant orchestrator/container state before proposing runtime commands. Useful read-only checks include `ss -ltnp`, `docker ps`, `docker compose ps`, and service-specific status/log commands.
 
 ## Canonical Docs
 - `AGENTS.md`
@@ -49,8 +53,9 @@
 
 ## Standard Workflow
 1. Verify current repo/runtime state.
-2. Make scoped changes.
-3. Update canonical docs when production truth or operator workflow changes.
-4. Build/test the smallest relevant surface.
-5. Push only after checking worktree scope.
-6. On the VM, pull, rebuild, restart, and verify the live URL.
+2. Verify active services and port ownership before running anything that binds a port or changes runtime state.
+3. Make scoped changes.
+4. Update canonical docs when production truth or operator workflow changes.
+5. Build/test the smallest relevant surface.
+6. Push only after checking worktree scope.
+7. On the VM, pull, rebuild, restart, and verify the live URL.

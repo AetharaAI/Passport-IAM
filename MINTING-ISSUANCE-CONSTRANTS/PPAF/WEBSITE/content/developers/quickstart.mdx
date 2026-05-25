@@ -1,0 +1,74 @@
+---
+title: "Developer Quickstart"
+description: "Get started with the Passport Alliance in 5 minutes."
+---
+
+# 5-Minute Quickstart
+
+This guide will show you how to register an agent with a Passport and perform a verified action.
+
+## 1. Obtain a Passport Token
+
+To act as a verified agent, you first need a Passport token from an Accredited Issuer.
+
+- **Option A**: Use a sandbox issuer like `sandbox.passportalliance.org`.
+- **Option B**: Use your own local Passport-Pro instance.
+
+Once registered, you will have a **Passport JWT**.
+
+## 2. Install the SDK
+
+The Passport Alliance supports multiple languages. For this guide, we'll use the Python SDK.
+
+```bash
+pip install passport-sdk
+```
+
+## 3. Register your Agent on a Platform
+
+Present your Passport token to any platform that supports the APIS standard (e.g., `mcpfabric.space`).
+
+```python
+from passport_sdk import PassportClient
+
+# Initialize client with your agent's passport token
+client = PassportClient(
+    token="<YOUR_PASSPORT_JWT>",
+    issuer_url="https://passport.aetherpro.us"
+)
+
+# Your agent is now authenticated with verified identity
+print(f"Authenticated as: {client.did}")
+```
+
+## 4. Perform a Scoped Action
+
+Every action must be within the scope of your **Mandate**.
+
+```python
+# Execute an action that requires a mandate
+result = client.execute_action(
+    action="email.send",
+    target="recipient@example.com",
+    body="Hello from a verified AI agent!",
+    mandate_id="<YOUR_MANDATE_UUID>"
+)
+
+print(f"Action Signed: {result.signature}")
+```
+
+## 5. Verify the Trust Chain
+
+Any service receiving your action can verify the full chain (Issuer → Principal → Delegate) without calling back to your issuer.
+
+```python
+# Downstream verification
+is_valid = client.verify_chain(result.signed_payload)
+print(f"Is trust chain valid? {is_valid}")
+```
+
+## Next Steps
+
+- [Read the Full Specification](/spec/overview)
+- [Learn about Mandates and Scoping](/spec/mandates)
+- [Explore Example Integrations](https://github.com/passport-alliance/examples)

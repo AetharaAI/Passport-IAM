@@ -1,0 +1,57 @@
+---
+title: "Agent Passport Credential"
+description: "Technical specification for the Agent Passport DID and credential format."
+sidebar:
+  order: 2
+---
+
+# APIS-001: Agent Passport Credential
+
+**Status:** Draft v1.0  
+**Authors:** AetherPro Technologies LLC  
+
+## 1. Introduction
+
+The Agent Passport is the foundational identity document for autonomous software agents within the Passport Alliance ecosystem. It provides a durable, cryptographically-bound identity that is portable across different runtimes and issuers.
+
+## 2. DID Method
+
+Agent Identities MUST use the `did:passport:` method.
+
+- **Uniform Resource Name (URN)**: `did:passport:<uuid>`
+- **Example**: `did:passport:550e8400-e29b-41d4-a716-446655440000`
+
+## 3. Credential Format
+
+The passport is represented as a JSON-LD object (for W3C DID compliance) and SHOULD be wrapped in a signed JWS when transmitted.
+
+### 3.1 Required Fields
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `passport_id` | UUID | Unique identifier for the passport instance. |
+| `passport_did` | String | The `did:passport:` URN. |
+| `issuer_id` | String | Identifier for the Accredited Issuer. |
+| `public_key` | JWK | The agent's Ed25519 public key. |
+| `principal_id`| UUID | The unique ID of the owning Principal. |
+| `issued_at` | Integer | Epoch timestamp of issuance. |
+
+### 3.2 Optional Fields
+
+- `capabilities`: Array of strings (e.g., `["reason", "code"]`).
+- `software_id`: Hash of the agent's source code or container image.
+- `expires_at`: Epoch timestamp of expiration.
+
+## 4. Issuance Protocol
+
+Issuance follows a strict **Proof of Possession (PoP)** flow to ensure the agent holds the private key corresponding to its public key.
+
+1.  **Challenge**: Issuer sends a random nonce.
+2.  **Response**: Agent signs the nonce with its private key.
+3.  **Verification**: Issuer verifies the signature.
+4.  **Minting**: Issuer signs the passport payload using the **Issuer Private Key**.
+
+## 5. Security Considerations
+
+- **Key Storage**: Agent private keys MUST be stored in a secure environment (e.g., HSM, Secure Enclave, or encrypted memory).
+- **Revocation**: If an agent key is compromised, the passport MUST be revoked via the issuer's revocation endpoint.

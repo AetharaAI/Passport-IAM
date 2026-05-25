@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "APIS v1 Agent Passport",
+  "type": "object",
+  "required": [
+    "passport_id",
+    "passport_did",
+    "issuer_id",
+    "issued_at",
+    "status",
+    "public_key",
+    "key_fingerprint",
+    "principal_id",
+    "memory_anchor_id",
+    "revocation_nonce"
+  ],
+  "properties": {
+    "passport_id": { "type": "string", "format": "uuid" },
+    "passport_did": { "type": "string", "pattern": "^did:passport:[a-f0-9\\-]+$" },
+    "issuer_id": { "type": "string" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "status": {
+      "type": "string",
+      "enum": ["active", "suspended", "revoked"]
+    },
+    "public_key": {
+      "type": "object",
+      "properties": {
+        "kty": { "type": "string" },
+        "crv": { "type": "string" },
+        "x": { "type": "string" },
+        "y": { "type": ["string", "null"] }
+      },
+      "required": ["kty", "crv", "x"]
+    },
+    "key_fingerprint": { "type": "string" },
+    "principal_id": { "type": "string" },
+    "delegate_id": { "type": ["string", "null"] },
+    "memory_anchor_id": { "type": "string" },
+    "revocation_nonce": { "type": "integer", "minimum": 0 },
+    "software_id": { "type": ["string", "null"] },
+    "software_version": { "type": ["string", "null"] }
+  }
+}

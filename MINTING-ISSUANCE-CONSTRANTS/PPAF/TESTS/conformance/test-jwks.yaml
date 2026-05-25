@@ -1,0 +1,12 @@
+name: jwks_publication
+description: Issuer must publish valid JWKS.
+
+steps:
+  - action: fetch_jwks
+    endpoint: "/.well-known/jwks.json"
+    expected:
+      - valid_json
+      - contains_public_key_matching_passport
+
+success_criteria:
+  - JWKS must be publicly accessible and cryptographically correct.

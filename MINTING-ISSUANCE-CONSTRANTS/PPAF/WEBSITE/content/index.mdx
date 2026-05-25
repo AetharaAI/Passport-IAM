@@ -1,0 +1,72 @@
+---
+title: "The Identity Standard for AI Agents"
+description: "Verifiable identity. Scoped authorization. Full accountability. An open standard for the age of autonomous AI."
+template: splash
+hero:
+  tagline: "Verifiable identity. Scoped authorization. Full accountability. An open standard for the age of autonomous AI."
+  actions:
+    - text: Read the Specification
+      link: /spec/overview
+      icon: right-arrow
+      variant: primary
+    - text: Become an Issuer
+      link: /issuers/requirements
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## The Security Gap
+
+Modern AI agents can act, transact, and control systems—yet there is no common way to know **who an agent is, who authorized it, what it is allowed to do, and how to revoke it** when something goes wrong.
+
+The Passport Alliance standard solves this by establishing a federated trust network of accredited issuers.
+
+## The Three Pillars of Agent Trust
+
+<CardGrid stagger>
+	<Card title="Identity" icon="pencil">
+		**Every agent gets a birth certificate.**
+		- DID-based identity (`did:passport:<uuid>`)
+		- Issued by accredited authorities
+		- Cryptographically signed by the issuer
+	</Card>
+	<Card title="Authorization" icon="setting">
+		**Limited power of attorney, not blank checks.**
+		- Principals grant scoped Mandates to Delegates
+		- Time-bound, capability-specific
+		- Cryptographically signed by the principal
+	</Card>
+	<Card title="Accountability" icon="list-format">
+		**Every action has a paper trail.**
+		- Three-party signature chain (Issuer → Principal → Delegate)
+		- Full audit trail of signed actions
+		- Revocation propagation across the federation
+	</Card>
+</CardGrid>
+
+---
+
+## The ICANN for AI Agents
+
+The Passport Alliance follows a federated governance model to prevent central points of failure and ensure trust at scale.
+
+| Feature | DNS / ICANN | Passport Alliance |
+| :--- | :--- | :--- |
+| **Trust Root** | Root Zone Maintainers | Governance Board |
+| **Issuers** | Domain Registrars | Accredited Passport Issuers |
+| **Identities** | Domain Names | Agent Passports (DIDs) |
+| **Control** | DNS Records | Mandates & Signatures |
+
+---
+
+## Become an Accredited Issuer
+
+Join the network of trusted identity providers building the secure backbone for autonomous AI.
+
+- [Become a Tier 1 (Self-Certified) Issuer](/issuers/requirements)
+- [Apply for Tier 2 (Alliance Accredited) Status](/issuers/requirements)
+
+---
+
+Founded by **AetherPro Technologies LLC**. Governed by the community.

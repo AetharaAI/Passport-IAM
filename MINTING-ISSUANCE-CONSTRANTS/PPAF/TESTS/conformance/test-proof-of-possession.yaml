@@ -1,0 +1,15 @@
+name: proof_of_possession
+description: Issuer must verify private key ownership before minting a passport.
+
+steps:
+  - action: request_passport_without_signed_nonce
+    expected: reject
+
+  - action: request_passport_with_invalid_signature
+    expected: reject
+
+  - action: request_passport_with_valid_signature
+    expected: accept
+
+success_criteria:
+  - No passport may be issued without a valid signed nonce.

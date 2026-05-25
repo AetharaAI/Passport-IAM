@@ -1,0 +1,411 @@
+openapi: 3.1.0
+info:
+  title: Passport Alliance - APIS v1 Issuer API
+  version: "1.0"
+  description: |
+    Reference OpenAPI definition for APIS v1 compliant issuers.
+    This spec defines the minimum endpoints required to issue, verify, and revoke Agent Passports.
+
+servers:
+  - url: https://issuer.example.com
+
+tags:
+  - name: issuance
+  - name: passports
+  - name: revocation
+  - name: discovery
+
+paths:
+  /.well-known/openid-configuration:
+    get:
+      tags: [discovery]
+      summary: OIDC discovery document
+      description: |
+        APIS relies on standard OIDC discovery for issuer metadata and JWKS location.
+      responses:
+        "200":
+          description: OIDC discovery JSON
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /.well-known/jwks.json:
+    get:
+      tags: [discovery]
+      summary: JWKS endpoint
+      description: |
+        Public signing keys for token verification. Verifiers MUST be able to fetch this.
+      responses:
+        "200":
+          description: JWKS
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWKS"
+
+  /v1/issuance/nonce:
+    post:
+      tags: [issuance]
+      summary: Request an issuance nonce (Proof-of-Possession challenge)
+      description: |
+        Step 1 of Proof-of-Possession (PoP). Issuer generates a random nonce.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NonceRequest"
+      responses:
+        "200":
+          description: Nonce issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NonceResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /v1/passports:
+    post:
+      tags: [issuance]
+      summary: Mint an Agent Passport
+      description: |
+        Step 2 of PoP. Requester submits public_key + signed nonce.
+        Issuer verifies PoP, then mints a passport if requirements are met.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PassportMintRequest"
+      responses:
+        "201":
+          description: Passport minted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Passport"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Conflict (e.g., duplicate key fingerprint)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/passports/{passport_did}:
+    get:
+      tags: [passports]
+      summary: Resolve passport status and metadata (verifier endpoint)
+      description: |
+        Verifiers use this endpoint to confirm status (active/suspended/revoked),
+        and to read revocation_nonce for instant token invalidation.
+      parameters:
+        - name: passport_did
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^did:passport:[a-f0-9\\-]+$"
+      responses:
+        "200":
+          description: Passport details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Passport"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/passports/{passport_did}/status:
+    patch:
+      tags: [passports]
+      summary: Update passport status (suspend/reactivate)
+      description: |
+        Allows controlled lifecycle operations without revocation.
+        Authorization required (issuer/admin).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: passport_did
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^did:passport:[a-f0-9\\-]+$"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PassportStatusUpdate"
+      responses:
+        "200":
+          description: Updated passport
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Passport"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/passports/{passport_did}/revoke:
+    post:
+      tags: [revocation]
+      summary: Revoke passport (increments revocation_nonce)
+      description: |
+        Revocation MUST increment revocation_nonce.
+        Tokens minted prior to revocation MUST fail verification once nonce changes.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: passport_did
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^did:passport:[a-f0-9\\-]+$"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RevokeRequest"
+      responses:
+        "200":
+          description: Revoked passport
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Passport"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+
+    JWKS:
+      type: object
+      required: [keys]
+      properties:
+        keys:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    NonceRequest:
+      type: object
+      required: [realm_id, principal_id, public_key]
+      properties:
+        realm_id:
+          type: string
+        principal_id:
+          type: string
+        owner_user_id:
+          type: string
+          nullable: true
+        public_key:
+          $ref: "#/components/schemas/PublicKeyJWK"
+
+    NonceResponse:
+      type: object
+      required: [nonce, nonce_id, expires_at]
+      properties:
+        nonce_id:
+          type: string
+        nonce:
+          type: string
+          description: Base64url-encoded nonce
+        expires_at:
+          type: string
+          format: date-time
+
+    PublicKeyJWK:
+      type: object
+      required: [kty, crv, x]
+      properties:
+        kty:
+          type: string
+        crv:
+          type: string
+        x:
+          type: string
+        y:
+          type: string
+          nullable: true
+        kid:
+          type: string
+          nullable: true
+
+    PassportMintRequest:
+      type: object
+      required:
+        - realm_id
+        - principal_id
+        - public_key
+        - nonce_id
+        - signed_nonce
+        - agent_type
+        - capabilities
+        - subdelegation_mode
+      properties:
+        realm_id:
+          type: string
+        principal_id:
+          type: string
+        owner_user_id:
+          type: string
+          nullable: true
+        public_key:
+          $ref: "#/components/schemas/PublicKeyJWK"
+        nonce_id:
+          type: string
+        signed_nonce:
+          type: string
+          description: Base64url signature over nonce
+        agent_type:
+          type: string
+          enum: [ai-assistant, autonomous-agent, human-proxy, service-agent]
+        capabilities:
+          type: array
+          items:
+            type: string
+        software_id:
+          type: string
+          nullable: true
+        software_version:
+          type: string
+          nullable: true
+        model_id:
+          type: string
+          nullable: true
+        model_version:
+          type: string
+          nullable: true
+        memory_anchor_id:
+          type: string
+          nullable: true
+          description: If omitted, issuer MUST compute memory_anchor_id = SHA-256(public_key)
+        subdelegation_mode:
+          type: string
+          enum: [none, controlled]
+        subdelegation_max_depth:
+          type: integer
+          minimum: 0
+          nullable: true
+
+    PassportStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [active, suspended]
+
+    RevokeRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          nullable: true
+
+    Passport:
+      type: object
+      required:
+        - passport_id
+        - passport_did
+        - issuer_id
+        - issued_at
+        - status
+        - public_key
+        - key_fingerprint
+        - principal_id
+        - memory_anchor_id
+        - revocation_nonce
+      properties:
+        passport_id:
+          type: string
+          format: uuid
+        passport_did:
+          type: string
+          pattern: "^did:passport:[a-f0-9\\-]+$"
+        issuer_id:
+          type: string
+        issued_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum: [active, suspended, revoked]
+        public_key:
+          $ref: "#/components/schemas/PublicKeyJWK"
+        key_fingerprint:
+          type: string
+        principal_id:
+          type: string
+        delegate_id:
+          type: string
+          nullable: true
+        memory_anchor_id:
+          type: string
+        revocation_nonce:
+          type: integer
+          minimum: 0
+        software_id:
+          type: string
+          nullable: true
+        software_version:
+          type: string
+          nullable: true
+
