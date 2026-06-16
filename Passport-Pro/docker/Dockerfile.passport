@@ -1,0 +1,57 @@
+# =====================================================
+# Passport-IAM — production image (aetherops/passport)
+# =====================================================
+# Bakes the FORK's own distribution (passport-999.0.0-SNAPSHOT), which already
+# contains the Agency/APIS extension (in lib/lib/main, with META-INF/beans.xml),
+# the rebranded admin UI, and Passport themes. NOT upstream Keycloak.
+#
+# Build context: Passport-Pro/quarkus/dist/target  (holds the extracted dist dir)
+# Built + pushed via: build-and-push-passport-image.sh  (repo root)
+#
+# The image runs `kc.sh build` at build time so the server ships OPTIMIZED /
+# pre-augmented — RESTEasy Reactive indexes the Agency provider here, so the
+# 405-class "un-indexed provider" failure cannot recur at runtime.
+# =====================================================
+ARG DIST_DIR=passport-999.0.0-SNAPSHOT
+
+FROM eclipse-temurin:21-jre-alpine
+ARG DIST_DIR
+
+# kc.sh is a bash script; ensure bash + tools are present on alpine
+RUN apk add --no-cache bash tzdata
+
+ENV KC_RUN_IN_CONTAINER=true \
+    LANG=en_US.UTF-8
+
+# Bring in the fork distribution
+COPY --chown=1000:0 ${DIST_DIR} /opt/passport
+WORKDIR /opt/passport
+
+# Pre-augment / optimize the server. Build-time config must match the dimensions
+# we run with (db vendor, health, metrics) so `start --optimized` is valid.
+RUN /opt/passport/bin/kc.sh build \
+        --db=postgres \
+        --health-enabled=true \
+        --metrics-enabled=true \
+    && chmod -R g+rwX /opt/passport
+
+# Non-root runtime
+RUN echo "passport:x:0:root" >> /etc/group && \
+    echo "passport:x:1000:0:passport user:/opt/passport:/sbin/nologin" >> /etc/passwd
+USER 1000
+
+EXPOSE 8080 8443 9000
+
+# Runtime config (KC_DB_URL, KC_HOSTNAME, secrets, etc.) is supplied via env at
+# `docker run` time. Default command starts the pre-built optimized server.
+ENTRYPOINT ["/opt/passport/bin/kc.sh"]
+CMD ["start", "--optimized"]
+
+# --- OCI / labels ---
+ARG PASSPORT_VERSION=999.0.0-SNAPSHOT
+LABEL org.opencontainers.image.title="Passport IAM" \
+      org.opencontainers.image.description="AetherPro Passport IAM — Keycloak-derived identity authority with Agency/LBAC and APIS v2.0 Agent Passport issuance" \
+      org.opencontainers.image.vendor="AetherPro Technologies LLC" \
+      org.opencontainers.image.url="https://passportalliance.org" \
+      org.opencontainers.image.source="https://github.com/AetharaAI/Passport-IAM" \
+      org.opencontainers.image.version="${PASSPORT_VERSION}"

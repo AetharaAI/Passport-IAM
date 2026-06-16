@@ -14,6 +14,7 @@
 - Passport-Pro is live; Agency/LBAC tab visible and functional.
 - Agency admin REST is LIVE and dispatching (2026-06-16). The 405-on-every-verb failure is RESOLVED in production. Verified live (realm=master): GET config/principals/principals-count → 200, OPTIONS → 200, all verbs non-405.
 - APIS v2.0 mint endpoint `POST /admin/realms/{realm}/agency/passports/mint` is reachable; a real end-to-end mint (enable agent passports → create principal → mint → verify Passport JWT against live JWKS) has NOT been run yet.
+- Passport is now a pullable PRIVATE Docker image: `aetherops/passport:0.1.0` / `:latest` (digest `sha256:7c71223f…b0bf9d82`). Built via `build-and-push-passport-image.sh` + `Passport-Pro/docker/Dockerfile.passport`. Provider is pre-indexed at image-build time.
 
 ## Deploy Reality
 - Keycloak-derived Java/Quarkus 3.31.1 (RESTEasy Reactive / `quarkus-rest`) backend + React admin UI fork.
