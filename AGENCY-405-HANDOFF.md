@@ -1,5 +1,7 @@
 # Agency/LBAC 405 Handoff
 
+> **RESOLVED 2026-06-16.** Root cause was NOT in this document's hypotheses (paths/headers/auth). It was a stale, un-indexed agency jar in the augmented distribution's `lib/lib/main/`: RESTEasy Reactive only registers JAX-RS handlers for classes in the build-time Jandex index, and the deployed jar predated the `META-INF/beans.xml` application-archive marker (commit `57bae5d`). Fix = ship the beans.xml-bearing jar into `lib/lib/main` and re-augment (`kc.sh build`). Do NOT copy it into `providers/` (duplicate changelog → Liquibase failure). Verified live: all verbs non-405, OPTIONS 200. See CHANGELOG 2026-06-16. The historical analysis below is retained for context only.
+
 ## Purpose
 
 This handoff exists to stop repeated nginx/cache/auth loops while debugging the live Agency/LBAC tab.

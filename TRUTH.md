@@ -11,7 +11,8 @@
 - Live realm observed in screenshots: `syndicate`
 - Local repo root: `/home/cory/Documents/Passport-IAM`
 - Local code root: `/home/cory/Documents/Passport-IAM/Passport-Pro`
-- Deploy path on VM: unknown, must be verified before documenting as fact.
+- Deploy path on VM (verified 2026-06-16): repo at `/home/ubuntu/Passport-IAM/Passport-IAM`; mounted distribution at `Passport-Pro/quarkus/dist/target/passport-999.0.0-SNAPSHOT`; server runs via `docker compose` service `passport` (`./bin/kc.sh start`, non-optimized, so it re-augments at start).
+- The agency extension is a declared dependency of `quarkus/server`, so it is packaged into the augmented app at `lib/lib/main/com.aetherpro.passport.passport-agency-999.0.0-SNAPSHOT.jar` — NOT in `providers/` (providers/ holds only README). A duplicate copy in `providers/` breaks startup (Liquibase finds the changelog twice).
 
 ## Runtime Safety
 - `127.0.0.1` and `localhost` always mean the machine where the browser or command is running. A localhost URL on the operator workstation does not reach the VM unless an SSH tunnel or another explicit port forward is active.
@@ -31,7 +32,9 @@
 - The Passport admin console is live at `passport.aetherpro.us`.
 - The Agency/LBAC tab is visible.
 - The live UI currently shows working Agency dashboard and Create Principal screens.
-- The local repo contains new Agency route/form and APIS minting work that has not yet been pulled/rebuilt on the VM.
+- As of 2026-06-16, the Agency admin REST API is LIVE and dispatching: the prior 405-on-every-verb failure is RESOLVED in production. Verified live (realm=master, authed admin token): GET config/principals/principals-count → 200, OPTIONS → 200, all verbs non-405. Root cause and deploy steps are in CHANGELOG 2026-06-16.
+- The APIS v2.0 mint endpoint `POST /admin/realms/{realm}/agency/passports/mint` is reachable; a full end-to-end mint + JWT verification has not yet been run.
+- The agency public JWKS is served at `GET /realms/{realm}/agency/jwks`.
 
 ## Operator Mechanics
 - Frontend admin UI build command: `cd Passport-Pro/js/apps/admin-ui && pnpm build`

@@ -10,9 +10,9 @@
 ## Production Status
 - Passport-Pro is live.
 - Agency/LBAC tab is visible in the admin console.
-- Local changes implement missing Agency frontend routes/forms and backend APIS v2.0 passport minting.
-- Local changes now also include the Agency config 405 fix by normalizing admin subresource paths and removing the unnecessary JSON content-type header from config GET requests.
-- Local changes have not yet been deployed to the VM in this session.
+- Agency admin REST is LIVE and dispatching as of 2026-06-16. The long-standing 405-on-every-verb failure is RESOLVED in production (root cause was a stale, un-indexed agency jar in `lib/lib/main`; fix was the `beans.xml` application-archive marker from commit `57bae5d` reaching a re-augmented distribution). See CHANGELOG 2026-06-16.
+- Verified live (realm=master): GET config/principals/principals-count all 200, OPTIONS 200; all verbs non-405.
+- The APIS v2.0 mint endpoint `POST /admin/realms/{realm}/agency/passports/mint` is now reachable (dispatch unblocked). A full end-to-end mint (enable agent passports → create principal → mint → verify Passport JWT against the live JWKS) has NOT yet been run/verified.
 
 ## Deploy Reality
 - The project is a Keycloak-derived Java/Quarkus + React admin UI fork.
@@ -34,9 +34,10 @@
 - Postgres/Redis/Docker services are used for runtime verification, but long-running startup scripts should not be treated as quick tests.
 
 ## Remaining Gaps
-- VM deploy commands are not fully documented.
-- Exact Docker build context and ignored artifact issue must be verified on the VM.
-- Live production verification of the Agency config 405 fix still needs to be completed after pull/rebuild on the node.
+- End-to-end Agent Passport minting has not been exercised against the live server yet (endpoint now dispatches; mint flow + JWT verification still to be smoke-tested).
+- No clean pullable Docker/OCI image yet — deploy is still source-build + mounted-distribution; productization into a `docker pull`-style flow (for PresenceOS / Echo Pro nodes) is the next infra milestone.
+- Multi-issuer / verified Issuance Authority model (PassportAlliance.org-registered issuers) is design-stage, not implemented.
+- The `lib/lib/main` jar swap on the VM was a hand-patch; a clean full dist rebuild reproduces it from source (57bae5d), but the rebuild path should be captured as the canonical deploy.
 - No automated Agency minting unit test exists yet.
 - APIS DNS publication is optional and only runs when Cloudflare env vars are set.
 - Runtime APIS minting requires issuer key configuration.
@@ -55,14 +56,8 @@
 - `PresenceOS/PresenceOS_Aether_Node_Structure.md`
 
 ## Next Steps
-1. Push the validated Passport-IAM changes to GitHub.
-2. On the VM, pull the commit and run the targeted rebuild commands.
-3. Verify live admin routes:
-   - `/admin/master/console/#/syndicate/agency`
-   - `/admin/master/console/#/syndicate/agency/principals/new`
-   - `/admin/master/console/#/syndicate/agency/delegates/new`
-   - `/admin/master/console/#/syndicate/agency/passports/mint`
-   - `/admin/master/console/#/syndicate/agency/configure`
-4. Verify that `GET /admin/realms/{realm}/agency/config` returns `200` with an authenticated admin token and that Agency enablement persists across reload.
-5. Capture the exact VM deploy/restart commands in `TRUTH.md`.
-6. Productize the deploy path into a pullable Docker/OCI image flow suitable for PresenceOS and appliance/node installs.
+1. End-to-end mint smoke test (the "ultimate question"): enable agent passports on a realm, create a principal, `POST /agency/passports/mint` with a real `AgentPassportRepresentation`, and verify the returned Passport JWT validates against the live JWKS (`GET /realms/{realm}/agency/jwks`).
+2. Productize the deploy into a pullable Docker/OCI image (AetherOps registry) so PresenceOS / Echo Pro nodes can `docker pull` and run Passport like Keycloak, without bespoke source builds on the host.
+3. Capture the canonical full-dist rebuild + deploy commands in `TRUTH.md` (replacing the hand-patch path).
+4. Design the multi-issuer / verified Issuance Authority model (PassportAlliance.org-registered providers minting verifiable Agent Passports).
+5. APIS v2.1 work (definitions + changes, including replacing the insecure 1.1.1.1 Cloudflare dependency) — docs in `~/Aether-Admin-Platform/COLLAB`.
