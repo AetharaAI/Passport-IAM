@@ -1,0 +1,13 @@
+APIS v2.1 is an additive update to APIS v2.0. It adds Tier 2.0 confidential-compute
+attestation, algorithmic attestation-tier resolution, provider-neutral namespace
+proof, DNS/HTTPS evidence kinds, model-scope mandates, and a verified reference
+proof for the first conforming APIS v2.1 agent passport: Herman.
+
+The Herman proof demonstrates the chain root -> issuer delegation -> realm issuer
+-> agent passport -> DNS TXT anchor, validated from published artifacts at
+https://passportalliance.org/.well-known/ . The DNS anchor
+(herman._apis.syndicateai.co) was published on a registrar-managed zone with no
+Cloudflare, demonstrating the provider-neutral design.
+
+This version supersedes nothing in v2.0; v2.0 remains the canonical historical
+release and prior version of this record.

@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: "Passport Alliance Specification (APIS v2.1): Algorithmic Attestation Tiers, Provider-Neutral Namespace Proof, and Model-Scope Mandates"
+message: "If you reference this standard, please cite it."
+type: report
+authors:
+  - family-names: Gibson
+    given-names: Cory M.
+    affiliation: AetherPro Technologies LLC
+version: "2.1"
+date-released: 2026-06-29
+license: CC-BY-4.0
+repository-code: "https://github.com/AetharaAI/Passport-IAM"
+url: "https://passportalliance.org"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.18820876"
+    description: "Concept DOI (all versions). Replace with the version-specific v2.1 DOI once published."
+abstract: >
+  APIS v2.1 is an additive update to APIS v2.0 (the Agent Passport Issuance
+  Standard). It adds confidential-compute attestation (Tier 2.0), algorithmic
+  attestation-tier resolution, issuer-written and provider-neutral namespace
+  proof (DNS-TXT / HTTPS .well-known), evidence kinds, and model-scope mandates,
+  and includes a verified reference proof (Herman) demonstrating
+  root -> issuer delegation -> realm issuer -> agent passport -> DNS anchor
+  validation from published artifacts.
