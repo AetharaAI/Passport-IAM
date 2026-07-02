@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+      Promotes Mandates to first-class, scoped authority objects.
+
+      A mandate remains attached to a delegate (the grantee), preserving the
+      existing Principal -> Delegate -> Mandate storage pattern. These columns
+      add the grant metadata needed to express a scoped, revocable, time-boxed
+      authority: a human-friendly name, a mandate kind, the grantor principal,
+      and JSON scope envelopes (model / resource / harness). Nothing here
+      implements break-glass behaviour or a second authority point.
+    -->
+    <changeSet id="passport-agency-003-mandates" author="aetherpro">
+        <addColumn tableName="PASSPORT_MANDATE">
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="KIND" type="VARCHAR(40)"/>
+            <column name="GRANTOR_PRINCIPAL_ID" type="VARCHAR(36)"/>
+            <column name="MODEL_SCOPE" type="TEXT"/>
+            <column name="RESOURCE_SCOPE" type="TEXT"/>
+            <column name="HARNESS_SCOPE" type="TEXT"/>
+            <column name="METADATA" type="TEXT"/>
+            <column name="REVOCABLE" type="BOOLEAN" defaultValueBoolean="true"/>
+        </addColumn>
+
+        <createIndex tableName="PASSPORT_MANDATE" indexName="IDX_MANDATE_GRANTOR">
+            <column name="GRANTOR_PRINCIPAL_ID"/>
+        </createIndex>
+
+        <createIndex tableName="PASSPORT_MANDATE" indexName="IDX_MANDATE_REALM">
+            <column name="REALM_ID"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

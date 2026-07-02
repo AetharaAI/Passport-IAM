@@ -281,5 +281,6 @@
     </changeSet>
 
     <include file="META-INF/agency-changelog-002-crypto.xml"/>
-    
+    <include file="META-INF/agency-changelog-003-mandates.xml"/>
+
 </databaseChangeLog>

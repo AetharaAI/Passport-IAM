@@ -372,29 +372,69 @@ public class JpaAgencyProvider implements AgencyProvider {
         em.persist(entity);
         em.flush();
 
-        // CRYPTOGRAPHIC SIGNATURE: Principal signs the mandate
-        try {
-            // Get the principal who owns this delegate
-            String principalId = delegate.getPrincipalId();
+        // CRYPTOGRAPHIC SIGNATURE: Principal (delegate owner) signs the mandate
+        signMandate(entity, delegate.getPrincipalId(), delegate.getRealmId());
 
-            // Get principal's keypair
+        return entity;
+    }
+
+    @Override
+    public MandateModel createMandate(DelegateModel grantee, MandateGrant grant) {
+        // The grantor principal is, by construction, the principal that owns the
+        // grantee delegate. We honour an explicit grantorPrincipalId only when it
+        // matches; otherwise we fall back to the delegate's principal so a mandate
+        // can never be signed by an unrelated principal.
+        String grantorPrincipalId = grantee.getPrincipalId();
+
+        MandateEntity entity = new MandateEntity();
+        entity.setId(PassportModelUtils.generateId());
+        entity.setRealmId(grantee.getRealmId());
+        entity.setDelegateId(grantee.getId());
+        entity.setGrantorPrincipalId(grantorPrincipalId);
+        entity.setName(grant.getName());
+        entity.setKind(grant.getKind());
+        entity.setScope(grant.getCapabilityScope() != null ? grant.getCapabilityScope() : "");
+        entity.setModelScope(grant.getModelScope());
+        entity.setResourceScope(grant.getResourceScope());
+        entity.setHarnessScope(grant.getHarnessScope());
+        entity.setMetadata(grant.getMetadata());
+        entity.setRevocable(grant.isRevocable());
+        entity.setRequiresSecondFactor(false);
+        entity.setActive(true);
+        entity.setValidFrom(grant.getValidFrom() != null ? grant.getValidFrom() : Instant.now());
+        entity.setValidUntil(grant.getValidUntil());
+        entity.setUsageCount(0);
+        entity.setCreatedAt(Instant.now());
+
+        em.persist(entity);
+        em.flush();
+
+        signMandate(entity, grantorPrincipalId, grantee.getRealmId());
+
+        return entity;
+    }
+
+    /**
+     * Sign a persisted mandate with the grantor principal's key, best-effort.
+     * A mandate remains valid (created) even if no principal key is available.
+     */
+    private void signMandate(MandateEntity entity, String principalId, String realmId) {
+        try {
             TypedQuery<AgencyKeypairEntity> query = em.createNamedQuery(
                 "AgencyKeypairEntity.findActiveByEntity",
                 AgencyKeypairEntity.class
             );
             query.setParameter("entityType", "PRINCIPAL");
             query.setParameter("entityId", principalId);
-            query.setParameter("realmId", delegate.getRealmId());
+            query.setParameter("realmId", realmId);
 
             List<AgencyKeypairEntity> principalKeys = query.getResultList();
             if (!principalKeys.isEmpty()) {
                 AgencyKeypairEntity principalKeypair = principalKeys.get(0);
                 entity.setPrincipalKid(principalKeypair.getKid());
 
-                // Build mandate payload for signing
                 String mandatePayload = buildMandatePayload(entity, principalId);
 
-                // Sign with principal's private key
                 PrivateKey principalPrivateKey = keyManager.getPrivateKey(principalKeypair)
                     .orElseThrow(() -> new RuntimeException("Failed to decrypt principal private key"));
                 String principalSignature = signatureService.sign(principalPrivateKey, mandatePayload);
@@ -411,8 +451,15 @@ public class JpaAgencyProvider implements AgencyProvider {
             logger.error("Failed to sign Mandate " + entity.getId(), e);
             // Mandate is still created, but without signature
         }
+    }
 
-        return entity;
+    @Override
+    public List<MandateModel> getMandatesForRealm(RealmModel realm) {
+        TypedQuery<MandateEntity> query = em.createNamedQuery("MandateEntity.findByRealm", MandateEntity.class);
+        query.setParameter("realmId", realm.getId());
+        return query.getResultStream()
+                .map(e -> (MandateModel) e)
+                .collect(Collectors.toList());
     }
 
     /**

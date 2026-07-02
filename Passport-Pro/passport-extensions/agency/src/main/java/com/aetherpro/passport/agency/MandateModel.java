@@ -65,7 +65,47 @@ public interface MandateModel {
     /** Reason for suspension (if applicable) */
     String getSuspensionReason();
     void setSuspensionReason(String reason);
-    
+
+    // ----- First-class mandate attributes -----
+    // Defaulted so existing implementations remain source-compatible; the JPA
+    // entity overrides these with persisted columns.
+
+    /** Human-friendly mandate name */
+    default String getName() { return null; }
+    default void setName(String name) { }
+
+    /** Mandate kind (operator, support, integration, model_route, benchmark,
+     *  collab, break_glass_reserved). break_glass_reserved is reserved only —
+     *  no break-glass behaviour is implemented. */
+    default String getKind() { return null; }
+    default void setKind(String kind) { }
+
+    /** Grantor principal id (the owning/legal entity granting this authority) */
+    default String getGrantorPrincipalId() { return null; }
+    default void setGrantorPrincipalId(String grantorPrincipalId) { }
+
+    /** JSON model_scope envelope (which model classes/models this grant covers) */
+    default String getModelScope() { return null; }
+    default void setModelScope(String modelScope) { }
+
+    /** JSON resource_scope envelope (nodes, repos, datasets, ...) */
+    default String getResourceScope() { return null; }
+    default void setResourceScope(String resourceScope) { }
+
+    /** JSON harness_scope list. Empty/absent means the grant is NOT valid in any
+     *  harness by default — an Agent Passport must never imply authority across
+     *  all harnesses. Harness scope is always explicit. */
+    default String getHarnessScope() { return null; }
+    default void setHarnessScope(String harnessScope) { }
+
+    /** Free-form JSON metadata */
+    default String getMetadata() { return null; }
+    default void setMetadata(String metadata) { }
+
+    /** Whether this mandate may be revoked (default true) */
+    default boolean isRevocable() { return true; }
+    default void setRevocable(boolean revocable) { }
+
     /**
      * Check if this mandate is currently valid
      */

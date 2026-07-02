@@ -8,8 +8,17 @@ import java.time.Instant;
 public class MandateRepresentation {
     
     private String id;
+    private String name;
+    private String kind;
+    private String grantorPrincipalId;
     private String delegateId;
     private String scope;
+    private String modelScope;
+    private String resourceScope;
+    private String harnessScope;
+    private String metadata;
+    private Boolean revocable;
+    private String status;
     private String constraints;
     private Double maxAmount;
     private Boolean requiresSecondFactor;
@@ -37,10 +46,82 @@ public class MandateRepresentation {
         this.id = id;
     }
     
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    public String getGrantorPrincipalId() {
+        return grantorPrincipalId;
+    }
+
+    public void setGrantorPrincipalId(String grantorPrincipalId) {
+        this.grantorPrincipalId = grantorPrincipalId;
+    }
+
+    public String getModelScope() {
+        return modelScope;
+    }
+
+    public void setModelScope(String modelScope) {
+        this.modelScope = modelScope;
+    }
+
+    public String getResourceScope() {
+        return resourceScope;
+    }
+
+    public void setResourceScope(String resourceScope) {
+        this.resourceScope = resourceScope;
+    }
+
+    public String getHarnessScope() {
+        return harnessScope;
+    }
+
+    public void setHarnessScope(String harnessScope) {
+        this.harnessScope = harnessScope;
+    }
+
+    public String getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
+    }
+
+    public Boolean getRevocable() {
+        return revocable;
+    }
+
+    public void setRevocable(Boolean revocable) {
+        this.revocable = revocable;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getDelegateId() {
         return delegateId;
     }
-    
+
     public void setDelegateId(String delegateId) {
         this.delegateId = delegateId;
     }

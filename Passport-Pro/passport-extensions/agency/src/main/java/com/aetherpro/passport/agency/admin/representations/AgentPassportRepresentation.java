@@ -18,6 +18,8 @@ public class AgentPassportRepresentation {
     private String tier;
     private String publicKeyPem;
     private Map<String, Object> mandate;
+    /** Optional reference to an existing first-class Mandate backing this passport. */
+    private String mandateId;
     private String machinePassportId;
     private String jwt;
     private String publicKeyFingerprint;
@@ -108,6 +110,14 @@ public class AgentPassportRepresentation {
 
     public void setMandate(Map<String, Object> mandate) {
         this.mandate = mandate;
+    }
+
+    public String getMandateId() {
+        return mandateId;
+    }
+
+    public void setMandateId(String mandateId) {
+        this.mandateId = mandateId;
     }
 
     public String getMachinePassportId() {

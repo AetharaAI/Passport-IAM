@@ -26,6 +26,14 @@ interface Principal {
     name: string;
 }
 
+interface Mandate {
+    id: string;
+    name?: string;
+    kind?: string;
+    grantorPrincipalId?: string;
+    status?: string;
+}
+
 const tiers = [
     { value: "tpm", label: "Tier 1 (Hardware TPM)" },
     { value: "dns", label: "Tier 2.5 (DNS-Anchored)" },
@@ -41,11 +49,13 @@ export function MintPassportForm() {
     const navigate = useNavigate();
 
     const [principals, setPrincipals] = useState<Principal[]>([]);
+    const [mandates, setMandates] = useState<Mandate[]>([]);
     const [agentName, setAgentName] = useState("");
     const [principalId, setPrincipalId] = useState("");
     const [tier, setTier] = useState("software");
     const [publicKeyPem, setPublicKeyPem] = useState("");
     const [mandate, setMandate] = useState("{}");
+    const [mandateId, setMandateId] = useState("");
     const [machinePassportId, setMachinePassportId] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -70,6 +80,30 @@ export function MintPassportForm() {
             }
         },
         [realm, adminClient]
+    );
+
+    // Existing first-class mandates the passport can reference (scoped to the
+    // selected principal). Optional — leave "None" to embed inline mandate JSON.
+    useFetch(
+        async () => {
+            const token = await adminClient.getAccessToken();
+            const response = await fetch(`/admin/realms/${realm}/agency/mandates`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
+            if (!response.ok) {
+                return [];
+            }
+            return response.json();
+        },
+        (result: Mandate[]) => setMandates(result),
+        [realm, adminClient]
+    );
+
+    const principalMandates = mandates.filter(
+        (m) => !m.grantorPrincipalId || m.grantorPrincipalId === principalId,
     );
 
     const handleSubmit = async () => {
@@ -100,6 +134,7 @@ export function MintPassportForm() {
                     tier,
                     publicKeyPem: publicKeyPem.trim(),
                     mandate: JSON.parse(mandate),
+                    mandateId: mandateId || undefined,
                     machinePassportId: machinePassportId.trim() || undefined,
                 }),
             });
@@ -176,6 +211,22 @@ export function MintPassportForm() {
                         placeholder="Paste ECDSA P-256 public key in PEM format"
                         autoResize
                     />
+                </FormGroup>
+                <FormGroup label="Backing Mandate" fieldId="mandateId">
+                    <FormSelect
+                        id="mandateId"
+                        value={mandateId}
+                        onChange={(_, value) => setMandateId(value)}
+                    >
+                        <FormSelectOption value="" label="None (embed inline mandate JSON below)" />
+                        {principalMandates.map((m) => (
+                            <FormSelectOption
+                                key={m.id}
+                                value={m.id}
+                                label={`${m.name || m.id}${m.kind ? ` (${m.kind})` : ""}`}
+                            />
+                        ))}
+                    </FormSelect>
                 </FormGroup>
                 <FormGroup label="Mandate (JSON)" isRequired fieldId="mandate">
                     <TextArea

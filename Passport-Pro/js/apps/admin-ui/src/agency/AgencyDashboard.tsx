@@ -145,7 +145,7 @@ export function AgencyDashboard() {
             icon: <KeyIcon />,
             label: "Active Mandates",
             value: config.mandateCount ?? 0,
-            link: `/${realm}/agency`,
+            link: `/${realm}/agency/mandates`,
             color: "purple",
         },
         {
@@ -331,6 +331,15 @@ export function AgencyDashboard() {
                                                 component={(props: any) => <Link {...props} to={`/${realm}/agency/delegates/new`} />}
                                             >
                                                 Create Delegate
+                                            </Button>
+                                        </FlexItem>
+                                        <FlexItem>
+                                            <Button
+                                                variant="secondary"
+                                                icon={<KeyIcon />}
+                                                component={(props: any) => <Link {...props} to={`/${realm}/agency/mandates`} />}
+                                            >
+                                                Mandates
                                             </Button>
                                         </FlexItem>
                                         {config.agentPassportsEnabled && (

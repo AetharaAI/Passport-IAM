@@ -127,6 +127,24 @@ public interface AgencyProvider extends Provider {
         Instant validUntil
     );
 
+    /**
+     * Create a first-class, scoped mandate granted by a principal (grantor) to a
+     * delegate (grantee). This does not introduce a second authority point: the
+     * mandate is still stored against the delegate and signed by the grantor
+     * principal exactly like {@link #createMandate}. It only carries the richer
+     * grant metadata (name, kind, model/resource/harness scope, ...).
+     *
+     * @param grantee The delegate receiving the authority
+     * @param grant   The scoped grant parameters
+     * @return The created mandate
+     */
+    MandateModel createMandate(DelegateModel grantee, MandateGrant grant);
+
+    /**
+     * List every mandate in the realm (first-class Mandates lane).
+     */
+    List<MandateModel> getMandatesForRealm(RealmModel realm);
+
     Optional<MandateModel> getMandate(String mandateId);
 
     List<MandateModel> getMandatesForDelegate(DelegateModel delegate);

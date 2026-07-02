@@ -530,6 +530,7 @@ public class AgencyAdminResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
+        agency.getMandate(mandateId).ifPresent(m -> emitRedWatchEvidence("mandate.suspended", m));
         agency.suspendMandate(mandateId, request != null ? request.getReason() : "Administrative action");
         logger.infof("Suspended mandate %s in realm %s", mandateId, realm.getName());
 
@@ -550,10 +551,146 @@ public class AgencyAdminResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
+        agency.getMandate(mandateId).ifPresent(m -> emitRedWatchEvidence("mandate.revoked", m));
         agency.revokeMandate(mandateId, reason != null ? reason : "Administrative revocation");
         logger.infof("Revoked mandate %s in realm %s", mandateId, realm.getName());
 
         return Response.ok("{\"status\":\"revoked\"}").build();
+    }
+
+    // ---- First-class Mandates lane ----
+
+    /** Recognised mandate kinds. break_glass_reserved is reserved only: no
+     *  break-glass behaviour is implemented. */
+    private static final List<String> MANDATE_KINDS = Arrays.asList(
+            "operator", "support", "integration", "model_route",
+            "benchmark", "collab", "break_glass_reserved");
+
+    @GET
+    @Path("mandates")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listMandates() {
+        auth.realm().requireViewRealm();
+
+        AgencyProvider agency = getAgencyProvider();
+
+        List<MandateRepresentation> mandates = agency.getMandatesForRealm(realm)
+                .stream()
+                .map(this::toMandateRep)
+                .collect(Collectors.toList());
+
+        return Response.ok(mandates).build();
+    }
+
+    @GET
+    @Path("mandates/{mandateId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMandate(@PathParam("mandateId") String mandateId) {
+        auth.realm().requireViewRealm();
+
+        AgencyProvider agency = getAgencyProvider();
+
+        return agency.getMandate(mandateId)
+                .map(m -> Response.ok(toMandateRep(m)).build())
+                .orElse(jsonError(Response.Status.NOT_FOUND, "Mandate not found"));
+    }
+
+    /**
+     * Create a first-class, scoped mandate: Principal (grantor) -> Delegate
+     * (grantee) -> Mandate. This is NOT a second authority point; the mandate is
+     * persisted against the grantee delegate and signed by the grantor principal,
+     * exactly like the existing delegate-scoped mandate path.
+     */
+    @POST
+    @Path("mandates")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createFirstClassMandate(MandateCreateRequest request) {
+        auth.realm().requireManageRealm();
+
+        if (request == null) {
+            return jsonError(Response.Status.BAD_REQUEST, "Request body is required");
+        }
+        if (isBlank(request.name)) {
+            return jsonError(Response.Status.BAD_REQUEST, "Mandate name is required");
+        }
+        if (isBlank(request.granteeDelegateId)) {
+            return jsonError(Response.Status.BAD_REQUEST, "Grantee delegate is required");
+        }
+        String kind = emptyToNull(request.kind);
+        if (kind != null && !MANDATE_KINDS.contains(kind)) {
+            return jsonError(Response.Status.BAD_REQUEST,
+                    "Unknown mandate kind '" + kind + "'. Allowed: " + String.join(", ", MANDATE_KINDS));
+        }
+
+        // Validate JSON envelopes up front so we never persist broken payloads.
+        String envelopeError = firstJsonError(
+                "modelScope", request.modelScope,
+                "resourceScope", request.resourceScope,
+                "harnessScope", request.harnessScope,
+                "metadata", request.metadata);
+        if (envelopeError != null) {
+            return jsonError(Response.Status.BAD_REQUEST, envelopeError);
+        }
+
+        AgencyProvider agency = getAgencyProvider();
+
+        return agency.getDelegate(request.granteeDelegateId)
+                .map(delegate -> {
+                    // Guard: an explicit grantor principal must match the delegate's
+                    // owning principal. This keeps the chain honest and prevents a
+                    // mandate being "granted" by an unrelated principal.
+                    if (!isBlank(request.grantorPrincipalId)
+                            && !request.grantorPrincipalId.equals(delegate.getPrincipalId())) {
+                        return jsonError(Response.Status.BAD_REQUEST,
+                                "Grantor principal does not own the grantee delegate");
+                    }
+
+                    // Guard: never grant a mandate to a delegate that is revoked,
+                    // suspended, or outside its own validity window.
+                    if (!delegate.isCurrentlyValid()) {
+                        return jsonError(Response.Status.BAD_REQUEST,
+                                "Grantee delegate is not currently valid (revoked, suspended, or outside its validity window)");
+                    }
+
+                    Instant validFrom = Instant.now();
+                    Instant validUntil = null;
+                    if (!isBlank(request.notAfter)) {
+                        try {
+                            validUntil = Instant.parse(request.notAfter);
+                        } catch (Exception e) {
+                            return jsonError(Response.Status.BAD_REQUEST,
+                                    "notAfter must be an ISO-8601 instant (e.g. 2026-12-31T00:00:00Z)");
+                        }
+                    } else if (request.expiryDays != null && request.expiryDays > 0) {
+                        validUntil = validFrom.plusSeconds((long) request.expiryDays * 24 * 60 * 60);
+                    }
+
+                    MandateGrant grant = new MandateGrant()
+                            .setName(request.name.trim())
+                            .setKind(kind)
+                            .setGrantorPrincipalId(delegate.getPrincipalId())
+                            .setCapabilityScope(emptyToNull(request.scope))
+                            .setModelScope(emptyToNull(request.modelScope))
+                            .setResourceScope(emptyToNull(request.resourceScope))
+                            .setHarnessScope(emptyToNull(request.harnessScope))
+                            .setMetadata(emptyToNull(request.metadata))
+                            .setRevocable(request.revocable == null || request.revocable)
+                            .setValidFrom(validFrom)
+                            .setValidUntil(validUntil);
+
+                    MandateModel mandate = agency.createMandate(delegate, grant);
+
+                    emitRedWatchEvidence("mandate.created", mandate);
+
+                    logger.infof("Created first-class mandate %s (kind=%s) for delegate %s in realm %s",
+                            mandate.getId(), kind, delegate.getId(), realm.getName());
+
+                    return Response.status(Response.Status.CREATED)
+                            .entity(toMandateRep(mandate))
+                            .build();
+                })
+                .orElse(jsonError(Response.Status.NOT_FOUND, "Grantee delegate not found"));
     }
 
     // ========== AGENT PASSPORTS ==========
@@ -991,8 +1128,16 @@ public class AgencyAdminResource {
     private MandateRepresentation toMandateRep(MandateModel model) {
         MandateRepresentation rep = new MandateRepresentation();
         rep.setId(model.getId());
+        rep.setName(model.getName());
+        rep.setKind(model.getKind());
+        rep.setGrantorPrincipalId(model.getGrantorPrincipalId());
         rep.setDelegateId(model.getDelegateId());
         rep.setScope(model.getScope());
+        rep.setModelScope(model.getModelScope());
+        rep.setResourceScope(model.getResourceScope());
+        rep.setHarnessScope(model.getHarnessScope());
+        rep.setMetadata(model.getMetadata());
+        rep.setRevocable(model.isRevocable());
         rep.setConstraints(model.getConstraints());
         rep.setMaxAmount(model.getMaxAmount());
         rep.setRequiresSecondFactor(model.requiresSecondFactor());
@@ -1005,7 +1150,75 @@ public class AgencyAdminResource {
         rep.setSuspendedAt(model.getSuspendedAt());
         rep.setSuspensionReason(model.getSuspensionReason());
         rep.setIsCurrentlyValid(model.isCurrentlyValid());
+        rep.setStatus(mandateStatus(model));
+
+        // Enrich grantor principal name + grantee delegate name (best-effort).
+        try {
+            AgencyProvider agency = getAgencyProvider();
+            agency.getDelegate(model.getDelegateId()).ifPresent(delegate -> {
+                UserModel agent = delegate.getAgentId() != null
+                        ? session.users().getUserById(realm, delegate.getAgentId())
+                        : null;
+                rep.setDelegateName(agent != null ? agent.getUsername() : delegate.getId());
+
+                String principalId = model.getGrantorPrincipalId() != null
+                        ? model.getGrantorPrincipalId()
+                        : delegate.getPrincipalId();
+                if (principalId != null) {
+                    agency.getPrincipal(realm, principalId)
+                            .ifPresent(p -> rep.setPrincipalName(p.getName()));
+                }
+            });
+        } catch (Exception e) {
+            logger.debugf("Could not enrich mandate %s with grantor/grantee names: %s",
+                    model.getId(), e.getMessage());
+        }
         return rep;
+    }
+
+    private String mandateStatus(MandateModel model) {
+        if (model.getSuspendedAt() != null) {
+            return "suspended";
+        }
+        if (!model.isActive()) {
+            return "revoked";
+        }
+        return model.isCurrentlyValid() ? "active" : "expired";
+    }
+
+    /**
+     * Validate that each provided value parses as JSON. Returns the first error
+     * message, or null if all are valid/blank. Fields are supplied as
+     * (label, value) pairs.
+     */
+    private String firstJsonError(String... labelValuePairs) {
+        for (int i = 0; i + 1 < labelValuePairs.length; i += 2) {
+            String label = labelValuePairs[i];
+            String value = labelValuePairs[i + 1];
+            if (isBlank(value)) {
+                continue;
+            }
+            try {
+                MAPPER.readTree(value);
+            } catch (Exception e) {
+                return label + " must be valid JSON";
+            }
+        }
+        return null;
+    }
+
+    /**
+     * RedWatch evidence emission point for mandate lifecycle events.
+     *
+     * TODO(redwatch): wire this to the real RedWatch evidence pipeline once the
+     * emit path is available in this deployment. Today it only logs, so callers
+     * must NOT claim RedWatch evidence is persisted. See docs/MANDATES.md
+     * ("RedWatch evidence gap").
+     */
+    private void emitRedWatchEvidence(String eventType, MandateModel mandate) {
+        logger.infof("[redwatch-stub] event=%s mandate=%s realm=%s kind=%s (not persisted - emit path not wired)",
+                eventType, mandate != null ? mandate.getId() : "n/a", realm.getName(),
+                mandate != null ? mandate.getKind() : "n/a");
     }
 
     private AgentPassportRepresentation toPassportRep(AgentPassport model) {
@@ -1058,6 +1271,38 @@ public class AgencyAdminResource {
                 return jsonError(Response.Status.FORBIDDEN, "Maximum passport limit reached for this principal");
             }
 
+            // Optional: back this passport with an existing first-class Mandate.
+            // The reference is recorded as a claim; it does NOT widen authority and
+            // never implies authority across all harnesses. If a mandateId is given
+            // it must resolve to a mandate granted under this same principal.
+            MandateModel backingMandate = null;
+            if (!isBlank(rep.getMandateId())) {
+                backingMandate = agency.getMandate(rep.getMandateId()).orElse(null);
+                if (backingMandate == null) {
+                    return jsonError(Response.Status.BAD_REQUEST,
+                            "Referenced mandate not found: " + rep.getMandateId());
+                }
+                // A passport may only be backed by a currently-valid mandate:
+                // reject revoked, suspended, expired, or not-yet-valid mandates so a
+                // dead grant can never back a live passport.
+                if (!backingMandate.isCurrentlyValid()) {
+                    return jsonError(Response.Status.BAD_REQUEST,
+                            "Referenced mandate is not currently valid (revoked, suspended, expired, or not yet valid)");
+                }
+                DelegateModel granteeDelegate = agency.getDelegate(backingMandate.getDelegateId()).orElse(null);
+                if (granteeDelegate == null || !granteeDelegate.isCurrentlyValid()) {
+                    return jsonError(Response.Status.BAD_REQUEST,
+                            "Referenced mandate's grantee delegate is not currently valid");
+                }
+                String grantor = backingMandate.getGrantorPrincipalId() != null
+                        ? backingMandate.getGrantorPrincipalId()
+                        : granteeDelegate.getPrincipalId();
+                if (grantor != null && !grantor.equals(principal.getId())) {
+                    return jsonError(Response.Status.BAD_REQUEST,
+                            "Referenced mandate is not granted under this principal");
+                }
+            }
+
             byte[] publicKeyDer = decodePem(rep.getPublicKeyPem());
             String fingerprint = "sha256/" + base64Url(MessageDigest.getInstance("SHA-256").digest(publicKeyDer));
             long iat = Instant.now().getEpochSecond();
@@ -1071,6 +1316,13 @@ public class AgencyAdminResource {
             claims.put("machine_passport_id", emptyToNull(rep.getMachinePassportId()));
             claims.put("tier", rep.getTier());
             claims.put("mandate", rep.getMandate());
+            if (backingMandate != null) {
+                Map<String, Object> mandateRef = new LinkedHashMap<>();
+                mandateRef.put("id", backingMandate.getId());
+                mandateRef.put("name", backingMandate.getName());
+                mandateRef.put("kind", backingMandate.getKind());
+                claims.put("mandate_ref", mandateRef);
+            }
             claims.put("public_key_fingerprint", fingerprint);
             claims.put("iat", iat);
             claims.put("exp", exp);
@@ -1275,6 +1527,22 @@ public class AgencyAdminResource {
         public String principalId;
         public String scope;
         public int expiryDays = 365;
+    }
+
+    /** Create-mandate request for the first-class Mandates lane. */
+    public static class MandateCreateRequest {
+        public String name;
+        public String kind;
+        public String grantorPrincipalId;
+        public String granteeDelegateId;
+        public String scope;
+        public String modelScope;
+        public String resourceScope;
+        public String harnessScope;
+        public Integer expiryDays;
+        public String notAfter;
+        public Boolean revocable;
+        public String metadata;
     }
 
     public static class SuspendRequest {

@@ -15,6 +15,10 @@ import java.time.Instant;
         query = "SELECT m FROM MandateEntity m WHERE m.delegateId = :delegateId ORDER BY m.createdAt DESC"
     ),
     @NamedQuery(
+        name = "MandateEntity.findByRealm",
+        query = "SELECT m FROM MandateEntity m WHERE m.realmId = :realmId ORDER BY m.createdAt DESC"
+    ),
+    @NamedQuery(
         name = "MandateEntity.findActiveByDelegateAndScope",
         query = "SELECT m FROM MandateEntity m WHERE m.delegateId = :delegateId AND m.scope = :scope AND m.active = true AND m.suspendedAt IS NULL AND (m.validUntil IS NULL OR m.validUntil > :now)"
     ),
@@ -70,6 +74,31 @@ public class MandateEntity implements MandateModel {
     
     @Column(name = "SUSPENSION_REASON", length = 500)
     private String suspensionReason;
+
+    // First-class mandate fields (from agency-changelog-003-mandates.xml)
+    @Column(name = "NAME", length = 255)
+    private String name;
+
+    @Column(name = "KIND", length = 40)
+    private String kind;
+
+    @Column(name = "GRANTOR_PRINCIPAL_ID", length = 36)
+    private String grantorPrincipalId;
+
+    @Column(name = "MODEL_SCOPE", columnDefinition = "TEXT")
+    private String modelScope;
+
+    @Column(name = "RESOURCE_SCOPE", columnDefinition = "TEXT")
+    private String resourceScope;
+
+    @Column(name = "HARNESS_SCOPE", columnDefinition = "TEXT")
+    private String harnessScope;
+
+    @Column(name = "METADATA", columnDefinition = "TEXT")
+    private String metadata;
+
+    @Column(name = "REVOCABLE")
+    private boolean revocable = true;
 
     // Cryptographic signature fields (from agency-changelog-002-crypto.xml)
     @Column(name = "PRINCIPAL_SIGNATURE", length = 4000)
@@ -231,6 +260,88 @@ public class MandateEntity implements MandateModel {
     @Override
     public void setSuspensionReason(String reason) {
         this.suspensionReason = reason;
+    }
+
+    // First-class mandate getters/setters
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getKind() {
+        return kind;
+    }
+
+    @Override
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    @Override
+    public String getGrantorPrincipalId() {
+        return grantorPrincipalId;
+    }
+
+    @Override
+    public void setGrantorPrincipalId(String grantorPrincipalId) {
+        this.grantorPrincipalId = grantorPrincipalId;
+    }
+
+    @Override
+    public String getModelScope() {
+        return modelScope;
+    }
+
+    @Override
+    public void setModelScope(String modelScope) {
+        this.modelScope = modelScope;
+    }
+
+    @Override
+    public String getResourceScope() {
+        return resourceScope;
+    }
+
+    @Override
+    public void setResourceScope(String resourceScope) {
+        this.resourceScope = resourceScope;
+    }
+
+    @Override
+    public String getHarnessScope() {
+        return harnessScope;
+    }
+
+    @Override
+    public void setHarnessScope(String harnessScope) {
+        this.harnessScope = harnessScope;
+    }
+
+    @Override
+    public String getMetadata() {
+        return metadata;
+    }
+
+    @Override
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
+    }
+
+    @Override
+    public boolean isRevocable() {
+        return revocable;
+    }
+
+    @Override
+    public void setRevocable(boolean revocable) {
+        this.revocable = revocable;
     }
 
     // Cryptographic signature getters/setters

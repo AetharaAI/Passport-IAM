@@ -10,4 +10,7 @@ export { CreatePrincipal } from "./CreatePrincipal";
 export { PrincipalDetail } from "./PrincipalDetail";
 export { DelegateForm } from "./DelegateForm";
 export { MintPassportForm } from "./MintPassportForm";
+export { MandatesList } from "./MandatesList";
+export { CreateMandateForm } from "./CreateMandateForm";
+export { MandateDetail } from "./MandateDetail";
 export { AgencyConfig } from "./AgencyConfig";

@@ -10,6 +10,28 @@ through the console.
 > the `syndicate` realm, so mint there — that's what makes a passport verify
 > against `passportalliance.org`'s published JWKS.
 
+## The authority flow
+
+The proper flow is:
+
+```
+Principal → Delegate → Mandate → Agent Passport
+```
+
+- **Principal** — accountable owner (e.g. AetherPro Technologies LLC).
+- **Delegate** — the actor *eligible* to receive authority (e.g. `faraday`).
+- **Mandate** — the scoped, revocable, time-boxed grant (capabilities, model
+  scope, resource scope, **explicit** harness scope). Create these in the Agency
+  → **Mandates** lane. See [MANDATES.md](MANDATES.md).
+- **Agent Passport** — the issued credential, optionally **backed by a mandate**
+  (the mint form's *Backing Mandate* selector adds a `mandate_ref` claim).
+
+Historically the mint form embedded a mandate JSON blob inline (the "escape
+hatch"). That still works, but the first-class path is: create the Delegate,
+create a Mandate for it, then mint the passport **referencing that mandate**. A
+passport never implies authority across all harnesses — harness scope lives on
+the mandate and is always explicit.
+
 ## Prerequisites (once per realm / principal)
 
 1. **Agency enabled** with **Agent Passports = Enabled** (Agency tab → Configure
@@ -17,7 +39,10 @@ through the console.
 2. **A Principal exists** — the accountable owner behind the agent. For AetherPro's
    own agents this is **AetherPro Technologies LLC**. Create via **Create
    Principal** if missing (type ORGANIZATION, jurisdiction US).
-3. **The agent's public key.** Every agent has its **own** EC P-256 keypair. The
+3. **A Delegate + Mandate exist** (recommended) — create the delegate under the
+   principal, then a Mandate granting its scope in the **Mandates** lane. You can
+   then reference that mandate at mint time.
+4. **The agent's public key.** Every agent has its **own** EC P-256 keypair. The
    **private key stays on the agent's machine**; only the **public** key goes into
    the passport.
 
@@ -40,6 +65,7 @@ Agency tab → **Quick Actions → Mint Agent Passport**, then fill the form:
 |---|---|
 | **Agent Name** | short id, e.g. `faraday` (becomes `did:passport:syndicate:faraday`) |
 | **Principal** | select the owner (e.g. AetherPro Technologies LLC) |
+| **Backing Mandate** | *(recommended)* select the Mandate that grants this agent's scope. Adds a `mandate_ref` claim. Leave **None** to embed inline mandate JSON instead. |
 | **Trust Tier** | see tiers below — for a normal VM/agent use **Tier 2.5 (DNS-Anchored)**; for a local operator tool use **Tier 3 (Software HSM)** |
 | **Public Key PEM** | paste the PUBLIC key from Step 1 |
 | **Mandate (JSON)** | the agent's authority — **must be non-empty** (mandates are required on `syndicate`). See the shape below. |

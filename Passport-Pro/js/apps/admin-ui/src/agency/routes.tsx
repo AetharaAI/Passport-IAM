@@ -107,6 +107,59 @@ export const toMintPassport = (params: PrincipalsParams): Partial<Path> => ({
     pathname: generateEncodedPath(MintPassportRoute.path, params),
 });
 
+// Mandates List
+const MandatesList = lazy(() => import("./MandatesList"));
+
+export const MandatesListRoute: AppRouteObject = {
+    path: "/:realm/agency/mandates",
+    element: <MandatesList />,
+    breadcrumb: (t) => t("mandates"),
+    handle: {
+        access: "view-realm",
+    },
+};
+
+export const toMandatesList = (params: PrincipalsParams): Partial<Path> => ({
+    pathname: generateEncodedPath(MandatesListRoute.path, params),
+});
+
+// Create Mandate
+const CreateMandateForm = lazy(() => import("./CreateMandateForm"));
+
+export const CreateMandateRoute: AppRouteObject = {
+    path: "/:realm/agency/mandates/new",
+    element: <CreateMandateForm />,
+    breadcrumb: (t) => t("createMandate"),
+    handle: {
+        access: "manage-realm",
+    },
+};
+
+export const toCreateMandate = (params: PrincipalsParams): Partial<Path> => ({
+    pathname: generateEncodedPath(CreateMandateRoute.path, params),
+});
+
+// Mandate Detail
+export type MandateDetailParams = {
+    realm: string;
+    mandateId: string;
+};
+
+const MandateDetail = lazy(() => import("./MandateDetail"));
+
+export const MandateDetailRoute: AppRouteObject = {
+    path: "/:realm/agency/mandates/:mandateId",
+    element: <MandateDetail />,
+    breadcrumb: (t) => t("mandateDetails"),
+    handle: {
+        access: "view-realm",
+    },
+};
+
+export const toMandateDetail = (params: MandateDetailParams): Partial<Path> => ({
+    pathname: generateEncodedPath(MandateDetailRoute.path, params),
+});
+
 // Principal Detail
 export type PrincipalDetailParams = {
     realm: string;
@@ -147,6 +200,9 @@ const routes: AppRouteObject[] = [
     CreatePrincipalRoute,
     CreateDelegateRoute,
     MintPassportRoute,
+    MandatesListRoute,
+    CreateMandateRoute,
+    MandateDetailRoute,
     PrincipalDetailRoute,
     PrincipalDetailWithTabRoute,
 ];
