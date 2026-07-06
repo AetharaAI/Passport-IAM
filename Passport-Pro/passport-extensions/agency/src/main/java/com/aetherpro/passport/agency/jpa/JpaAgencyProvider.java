@@ -217,6 +217,7 @@ public class JpaAgencyProvider implements AgencyProvider {
                                         String constraints, Instant validFrom, Instant validUntil) {
         DelegateEntity entity = new DelegateEntity();
         entity.setId(PassportModelUtils.generateId());
+        entity.setRealmId(principal.getRealmId());
         entity.setAgentId(agent.getId());
         entity.setPrincipalId(principal.getId());
         entity.setType(type);
