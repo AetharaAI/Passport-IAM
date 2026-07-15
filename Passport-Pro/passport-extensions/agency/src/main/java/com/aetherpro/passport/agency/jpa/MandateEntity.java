@@ -100,6 +100,9 @@ public class MandateEntity implements MandateModel {
     @Column(name = "REVOCABLE")
     private boolean revocable = true;
 
+    @Column(name = "CONTEXT_REF", length = 255)
+    private String contextRef;
+
     // Cryptographic signature fields (from agency-changelog-002-crypto.xml)
     @Column(name = "PRINCIPAL_SIGNATURE", length = 4000)
     private String principalSignature;
@@ -342,6 +345,16 @@ public class MandateEntity implements MandateModel {
     @Override
     public void setRevocable(boolean revocable) {
         this.revocable = revocable;
+    }
+
+    @Override
+    public String getContextRef() {
+        return contextRef;
+    }
+
+    @Override
+    public void setContextRef(String contextRef) {
+        this.contextRef = contextRef;
     }
 
     // Cryptographic signature getters/setters

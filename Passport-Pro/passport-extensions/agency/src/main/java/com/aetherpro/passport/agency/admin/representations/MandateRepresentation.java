@@ -17,6 +17,7 @@ public class MandateRepresentation {
     private String resourceScope;
     private String harnessScope;
     private String metadata;
+    private String contextRef;
     private Boolean revocable;
     private String status;
     private String constraints;
@@ -100,6 +101,14 @@ public class MandateRepresentation {
 
     public void setMetadata(String metadata) {
         this.metadata = metadata;
+    }
+
+    public String getContextRef() {
+        return contextRef;
+    }
+
+    public void setContextRef(String contextRef) {
+        this.contextRef = contextRef;
     }
 
     public Boolean getRevocable() {

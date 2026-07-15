@@ -282,5 +282,6 @@
 
     <include file="META-INF/agency-changelog-002-crypto.xml"/>
     <include file="META-INF/agency-changelog-003-mandates.xml"/>
+    <include file="META-INF/agency-changelog-004-context-ref.xml"/>
 
 </databaseChangeLog>

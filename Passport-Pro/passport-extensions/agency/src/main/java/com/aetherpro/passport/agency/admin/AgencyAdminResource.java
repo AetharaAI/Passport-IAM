@@ -675,6 +675,7 @@ public class AgencyAdminResource {
                             .setResourceScope(emptyToNull(request.resourceScope))
                             .setHarnessScope(emptyToNull(request.harnessScope))
                             .setMetadata(emptyToNull(request.metadata))
+                            .setContextRef(emptyToNull(request.contextRef))
                             .setRevocable(request.revocable == null || request.revocable)
                             .setValidFrom(validFrom)
                             .setValidUntil(validUntil);
@@ -1137,6 +1138,7 @@ public class AgencyAdminResource {
         rep.setResourceScope(model.getResourceScope());
         rep.setHarnessScope(model.getHarnessScope());
         rep.setMetadata(model.getMetadata());
+        rep.setContextRef(model.getContextRef());
         rep.setRevocable(model.isRevocable());
         rep.setConstraints(model.getConstraints());
         rep.setMaxAmount(model.getMaxAmount());
@@ -1543,6 +1545,7 @@ public class AgencyAdminResource {
         public String notAfter;
         public Boolean revocable;
         public String metadata;
+        public String contextRef;
     }
 
     public static class SuspendRequest {

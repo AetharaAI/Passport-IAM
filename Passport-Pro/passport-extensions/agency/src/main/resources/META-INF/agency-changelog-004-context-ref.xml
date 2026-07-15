@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!--
+      Adds an optional CONTEXT_REF to a mandate: a reference (e.g.
+      ctxpack://<principal>/vN or sha256:<hex>) to the Principal Context Pack that
+      governs the agent's operational context. Reference ONLY — never the payload,
+      never authority. Keeps Passport lean; the Context Pack lives in the sibling
+      `principal-context` repo. See its spec/CROSS-REPO-CONTRACT.md.
+    -->
+    <changeSet id="passport-agency-004-context-ref" author="aetherpro">
+        <addColumn tableName="PASSPORT_MANDATE">
+            <column name="CONTEXT_REF" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

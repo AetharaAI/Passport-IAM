@@ -106,6 +106,13 @@ public interface MandateModel {
     default boolean isRevocable() { return true; }
     default void setRevocable(boolean revocable) { }
 
+    /** Optional reference to the Principal Context Pack governing this agent's
+     *  operational context (e.g. ctxpack://<principal>/vN or sha256:<hex>).
+     *  Reference only — never payload, never authority. Lives in the sibling
+     *  `principal-context` repo. */
+    default String getContextRef() { return null; }
+    default void setContextRef(String contextRef) { }
+
     /**
      * Check if this mandate is currently valid
      */

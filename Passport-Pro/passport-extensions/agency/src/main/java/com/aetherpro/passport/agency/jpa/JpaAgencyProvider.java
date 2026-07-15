@@ -399,6 +399,7 @@ public class JpaAgencyProvider implements AgencyProvider {
         entity.setResourceScope(grant.getResourceScope());
         entity.setHarnessScope(grant.getHarnessScope());
         entity.setMetadata(grant.getMetadata());
+        entity.setContextRef(grant.getContextRef());
         entity.setRevocable(grant.isRevocable());
         entity.setRequiresSecondFactor(false);
         entity.setActive(true);

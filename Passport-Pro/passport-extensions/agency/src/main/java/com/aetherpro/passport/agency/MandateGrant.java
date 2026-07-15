@@ -24,6 +24,7 @@ public class MandateGrant {
     private String resourceScope;
     private String harnessScope;
     private String metadata;
+    private String contextRef;
     private boolean revocable = true;
     private Instant validFrom;
     private Instant validUntil;
@@ -97,6 +98,15 @@ public class MandateGrant {
 
     public MandateGrant setMetadata(String metadata) {
         this.metadata = metadata;
+        return this;
+    }
+
+    public String getContextRef() {
+        return contextRef;
+    }
+
+    public MandateGrant setContextRef(String contextRef) {
+        this.contextRef = contextRef;
         return this;
     }
 
